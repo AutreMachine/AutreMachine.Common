@@ -32,9 +32,14 @@ namespace AutreMachine.Common.Samples.APICaller
 
         public async Task<ServiceResponse<string>> AnswerName(string name)
         {
-            var client = new HttpClient();
-            var resp = await APICaller<string>.Get(client, "https://localhost:7130/WeatherForecast");
+            // HAck to prevent SSL error whenrunning on local machine
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
 
+            var client = new HttpClient(clientHandler);
+            client.BaseAddress = new Uri("https://localhost:7020");
+            //var resp = await APICaller<string>.Get(client, "api/answername2", "joe");
+            var resp = await APICaller<string>.Post(client, "api/answername", "joe");
             return resp;
         }
     }
