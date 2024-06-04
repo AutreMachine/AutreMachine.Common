@@ -44,19 +44,22 @@ namespace AutreMachine.Common
             try
             {
                 client.DefaultRequestHeaders.Add("Host", "AutreMachine");
-                client.DefaultRequestVersion = new Version("2.0");
+                //client.DefaultRequestVersion = new Version("2.0");
                 
-                
-
                 // Create the query
                 //string finalQuery = Path.Combine(parts);
                 string finalQuery = CreateQuery(query, parameters);
 
                 //HttpResponseMessage response = await client.GetAsync((finalQuery);
-                var req = new HttpRequestMessage(HttpMethod.Get, finalQuery);
-                req.Headers.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36");
+                var request = new HttpRequestMessage(HttpMethod.Get,
+                    finalQuery);
+                request.Headers.Add("Accept", "*/*");
+                request.Headers.Add("User-Agent", "AutreMachine-Common");
 
-                var response = await client.SendAsync(req);
+                //var req = new HttpRequestMessage(HttpMethod.Get, finalQuery);
+                //req.Headers.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36");
+
+                var response = await client.SendAsync(request);
 
                     //var str = HttpUtility.UrlEncode(JsonSerializer.Serialize(request));
 
@@ -74,7 +77,6 @@ namespace AutreMachine.Common
                     catch (Exception ex)
                     {
                         return (ServiceResponse<T>.Ko(ex.Message));
-                        //throw new Exception("Error during parsing : " + ex.Message);
                     }
                 }
                 else
@@ -84,9 +86,6 @@ namespace AutreMachine.Common
                     {
                         return (ServiceResponse<T>.Ko("Unauthorized"));
                     }
-                    //throw new UnauthorizedAccessException();
-
-                    //throw new Exception("Error : " + response.StatusCode + " - " + content);
                     return (ServiceResponse<T>.Ko("Error : " + response.StatusCode + " - " + content));
                 }
 

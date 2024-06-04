@@ -33,8 +33,7 @@ namespace AutreMachine.Common.Samples.APICaller
         public async Task<ServiceResponse<string>> AnswerName(string name)
         {
             var client = new HttpClient();
-            client.BaseAddress = new Uri("https://www.google.com");
-            var resp = await APICaller<string>.Get(client, "search?q=test");
+            var resp = await APICaller<string>.Get(client, "https://localhost:7130/WeatherForecast");
 
             return resp;
         }
