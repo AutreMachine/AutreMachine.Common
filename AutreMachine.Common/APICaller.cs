@@ -9,6 +9,8 @@ using System.Web;
 using System.Text.Json;
 using Polly;
 using Polly.Timeout;
+using System.Reflection.Metadata;
+using System.Net.Mime;
 
 namespace AutreMachine.Common
 {
@@ -39,63 +41,64 @@ namespace AutreMachine.Common
             if (client == null)
                 return (ServiceResponse<T>.Ko("Http not provided"));
 
-            // Create the query
-            //string finalQuery = Path.Combine(parts);
-            string finalQuery = CreateQuery(query, parameters);
-
-            HttpResponseMessage response = await client.GetAsync(finalQuery);
-            ServiceResponse<T>? resp = ServiceResponse<T>.Default;
-            if (response.IsSuccessStatusCode)
+            try
             {
-                /*var timeoutPolicy =
-                    Policy.TimeoutAsync(
-                        TimeSpan.FromSeconds(60),
-                        TimeoutStrategy.Optimistic,
-                        async (context, timespan, task) =>
-                        {
-                            //write here the cancel request 
-                            Console.WriteLine("Request canceled due to timeout.");
-                        });*/
+                client.DefaultRequestHeaders.Add("Host", "AutreMachine");
+                client.DefaultRequestVersion = new Version("2.0");
+                
+                
 
-                string respStr = "";
-                //var policyResult = await timeoutPolicy.ExecuteAndCaptureAsync(async () => {
-                respStr = await response.Content.ReadAsStringAsync();
-                //});
+                // Create the query
+                //string finalQuery = Path.Combine(parts);
+                string finalQuery = CreateQuery(query, parameters);
 
-                // Warning !
-                // we use a Json Serializer Settings to cope with the 3 classes that implement IAssetRate,
-                // as NewtonSoft is not able to Deserialize an interface (basically it sends the concrete type)
-                // resp = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(respStr, new JsonSerializerSettings()
-                // {
-                //    TypeNameHandling = TypeNameHandling.Auto
-                // });
-                try
+                //HttpResponseMessage response = await client.GetAsync((finalQuery);
+                var req = new HttpRequestMessage(HttpMethod.Get, finalQuery);
+                req.Headers.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36");
+
+                var response = await client.SendAsync(req);
+
+                    //var str = HttpUtility.UrlEncode(JsonSerializer.Serialize(request));
+
+                ServiceResponse<T>? resp = ServiceResponse<T>.Default;
+                if (response.IsSuccessStatusCode)
                 {
-                    resp = JsonSerializer.Deserialize<ServiceResponse<T>>(respStr);
+
+                    string respStr = await response.Content.ReadAsStringAsync();
+
+
+                    try
+                    {
+                        resp = JsonSerializer.Deserialize<ServiceResponse<T>>(respStr);
+                    }
+                    catch (Exception ex)
+                    {
+                        return (ServiceResponse<T>.Ko(ex.Message));
+                        //throw new Exception("Error during parsing : " + ex.Message);
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    return (ServiceResponse<T>.Ko(ex.Message));
-                    //throw new Exception("Error during parsing : " + ex.Message);
+                    var content = await response.Content.ReadAsStringAsync();
+                    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    {
+                        return (ServiceResponse<T>.Ko("Unauthorized"));
+                    }
+                    //throw new UnauthorizedAccessException();
+
+                    //throw new Exception("Error : " + response.StatusCode + " - " + content);
+                    return (ServiceResponse<T>.Ko("Error : " + response.StatusCode + " - " + content));
                 }
+
+                if (resp == null)
+                    return ServiceResponse<T>.Ko("Could not deserialize");
+
+                return ServiceResponse<T>.Ok(resp.Content);
             }
-            else
+            catch (Exception ex)
             {
-                var content = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return (ServiceResponse<T>.Ko("Unauthorized"));
-                }
-                //throw new UnauthorizedAccessException();
-
-                //throw new Exception("Error : " + response.StatusCode + " - " + content);
-                return (ServiceResponse<T>.Ko("Error : " + response.StatusCode + " - " + content));
+                return ServiceResponse<T>.Ko("Error : " + ex.Message);
             }
-
-            if (resp == null)
-                return ServiceResponse<T>.Ko("Could not deserialize");
-
-            return ServiceResponse<T>.Ok(resp.Content);
 
         }
 
@@ -144,8 +147,10 @@ namespace AutreMachine.Common
             if (response.IsSuccessStatusCode)
             {
                 var respStr = await response.Content.ReadAsStringAsync();
-                //resp = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(respStr);
-                resp = JsonSerializer.Deserialize<ServiceResponse<T>>(respStr);
+                //if (request is IServiceResponse)
+                    resp = JsonSerializer.Deserialize<ServiceResponse<T>>(respStr);
+                //else
+                  //  resp = JsonSerializer.Deserialize<T>(respStr);
 
             }
             else
@@ -157,82 +162,76 @@ namespace AutreMachine.Common
             return resp;
         }
 
-        public static async Task<ServiceResponse<T>> Post<U>(HttpClient client, string query, U request, double? timeout = null, Func<Context, TimeSpan, Task, string>? timeoutLambda = null)
+        public static async Task<ServiceResponse<T>> Post<U>(HttpClient client, string query, U request, bool isResponseServiceResponse = true, string? contentType = null) 
         {
-            // New policy to avoid 00:00:10 timeout
-            // Useful when calling AI services (ex : LM Studio)
             HttpResponseMessage? response = null;
-            if (timeout != null && (timeout < 0 || timeout > 500))
-                return ServiceResponse<T>.Ko("Timeout should be between 0 and 500 secoinds.");
 
-            if (timeout != null)
+            try
             {
-                var timeoutPolicy =
-                        Policy.TimeoutAsync(
-                            TimeSpan.FromSeconds(timeout.Value),
-                            TimeoutStrategy.Optimistic,
-                            async (context, timespan, task) =>
-                            {
-                                //write here the cancel request 
-                                if (timeoutLambda != null)
-                                    timeoutLambda(context, timespan, task);
-                                //Console.WriteLine("Request canceled due to timeout.");
-                            });
-
-
-                var policyResult = await timeoutPolicy.ExecuteAndCaptureAsync(async () =>
+                // Specific case if contentType
+                // Check : https://stackoverflow.com/questions/10679214/how-to-set-the-content-type-header-for-an-httpclient-request
+                if (contentType != null)
                 {
-                    response = await client.PostAsJsonAsync(query, request);
-                });
-            }
-            else
-                response = await client.PostAsJsonAsync(query, request);
+                    client.DefaultRequestHeaders
+                        .Accept
+                        .Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(contentType));
+                    var req = new HttpRequestMessage(HttpMethod.Post, query);
+                    //var str = HttpUtility.UrlEncode(JsonSerializer.Serialize(request));
+                    req.Content = new StringContent(JsonSerializer.Serialize(request),
+                        Encoding.UTF8,
+                        contentType);
 
-            ServiceResponse<T>? resp = ServiceResponse<T>.Default;
-            if (response != null && response.IsSuccessStatusCode)
+                    response = await client.SendAsync(req);
+                }
+                else
+                {
+                    client.DefaultRequestHeaders
+                        .Accept
+                        .Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                    var req = new HttpRequestMessage(HttpMethod.Post, query);
+                    //var str = HttpUtility.UrlEncode(JsonSerializer.Serialize(request));
+                    req.Content = new StringContent(JsonSerializer.Serialize(request),
+                        Encoding.UTF8,
+                        "application/json");
+
+                    response = await client.SendAsync(req);
+                    //response = await client.PostAsJsonAsync(query, request);
+                }
+
+                ServiceResponse<T>? resp = ServiceResponse<T>.Default;
+                if (response != null && response.IsSuccessStatusCode)
+                {
+                    var respStr = await response.Content.ReadAsStringAsync();
+                    
+                    // ry to deserialize
+                    if (isResponseServiceResponse)
+                        resp = JsonSerializer.Deserialize<ServiceResponse<T>?>(respStr);
+                    else
+                    {
+                        // Try on T
+                        var content = JsonSerializer.Deserialize<T?>(respStr);
+                        if (content == null)
+                            resp = ServiceResponse<T>.Ko("Could not deserialize");
+                        else
+                            resp = ServiceResponse<T>.Ok(content);
+                    }
+                }
+                else
+                    return ServiceResponse<T>.Ko("Error : " + response?.StatusCode);
+
+                if (resp == null)
+                    return ServiceResponse<T>.Ko("Could not deserialize.");
+
+                return resp;
+            }
+            catch (Exception ex)
             {
-                var respStr = await response.Content.ReadAsStringAsync();
-                //resp = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(respStr);
-                resp = JsonSerializer.Deserialize<ServiceResponse<T>?>(respStr);
+                return ServiceResponse<T>.Ko("Error : " + ex.Message);
             }
-            else
-                throw new Exception("Error : " + response?.StatusCode);
-
-            if (resp == null)
-                return ServiceResponse<T>.Ko("Could not deserialize.");
-
-            return resp;
         }
 
-        public static async Task<T?> Post(HttpClient client, string query, string content, string contentType)
-        {
-            // Check : https://stackoverflow.com/questions/10679214/how-to-set-the-content-type-header-for-an-httpclient-request
-            client.DefaultRequestHeaders
-                .Accept
-                .Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(contentType));
-            var req = new HttpRequestMessage(HttpMethod.Post, query);
-            //var str = HttpUtility.UrlEncode(JsonSerializer.Serialize(request));
-            req.Content = new StringContent(content,
-                Encoding.UTF8,
-                contentType);
 
-            var response = await client.SendAsync(req);
-
-            //HttpResponseMessage response = await client.PostAsJsonAsync(query, request);
-            T? resp = default(T);
-            if (response.IsSuccessStatusCode)
-            {
-                var respStr = await response.Content.ReadAsStringAsync();
-                //resp = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(respStr);
-                resp = JsonSerializer.Deserialize<T>(respStr);
-            }
-            else
-                throw new Exception("Error : " + response.StatusCode + " - " + await response.Content.ReadAsStringAsync());
-
-            return resp;
-        }
-
-        public static async Task<T?> Delete(HttpClient client, string query, params object[] parameters)
+        public static async Task<ServiceResponse<T>> Delete(HttpClient client, string query, params object[] parameters)
         {
             string finalQuery = CreateQuery(query, parameters);
 
@@ -245,9 +244,11 @@ namespace AutreMachine.Common
                 resp = JsonSerializer.Deserialize<T>(respStr);
             }
             else
-                throw new Exception("Error : " + response.StatusCode);
+            {
+                return ServiceResponse<T>.Ko("Error : " + response.StatusCode);
+            }
 
-            return resp;
+            return ServiceResponse<T>.Ok(resp);
         }
 
     }

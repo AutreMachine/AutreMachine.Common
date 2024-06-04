@@ -1,4 +1,6 @@
-﻿using AutreMachine.Common.Samples.ServiceReponse;
+﻿using AutreMachine.Common;
+using AutreMachine.Common.Samples.APICaller;
+using AutreMachine.Common.Samples.ServiceReponse;
 
 // ---------------
 // ServiceRepsonse
@@ -49,3 +51,31 @@ if (res3.Succeeded)
 }
 else
     Console.WriteLine($"Error : {res3.Message}");
+
+
+// APICALLER
+// ---------
+Console.WriteLine("\nAPICaller\n-----------");
+
+Console.WriteLine("\nLM Studio\n-----------");
+var apiCallerLocalTest = new APICallerLocalTest();
+/*var messages = new AIMessage[2]
+            {
+                new AIMessage {role="system", content="You are an helpful assistant who tries to extract every technical skill and every soft skill required in the prompts.You will output a JSON file with a Technical_skills list and a Soft_skills list."},
+                new AIMessage {role="user", content="J'ai de nombreuses qualités"}
+            };
+
+var answer = await apiCallerLocalTest.AskQuestion(messages, 0);
+if (answer.Succeeded && answer.Content != null)
+    Console.WriteLine($"Success : {answer.Content}");
+else
+    Console.WriteLine($"Error : {answer.Message}");
+*/
+
+// Test on a local server
+Console.WriteLine("\nLocal API\n-----------");
+var joe = await apiCallerLocalTest.AnswerName("Joe");
+if (joe.Succeeded && joe.Content != null)
+    Console.WriteLine($"Success : {joe.Content}");
+else
+    Console.WriteLine($"Error : {joe.Message}");

@@ -7,7 +7,13 @@ using System.Threading.Tasks;
 
 namespace AutreMachine.Common
 {
-    public class ServiceResponse<T>
+    public interface IServiceResponse
+    {
+        bool Succeeded { get; set; }
+        string Message { get; set; }
+    }
+
+    public class ServiceResponse<T> : IServiceResponse
     {
         [JsonPropertyName("succeeded")]
         public bool Succeeded { get; set; }
