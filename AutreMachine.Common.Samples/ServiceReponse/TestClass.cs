@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AutreMachine.Common;
 
-namespace AutreMachine.Common.Samples
+namespace AutreMachine.Common.Samples.ServiceReponse
 {
     public class TestClass : ITestClass
     {
@@ -67,7 +66,7 @@ namespace AutreMachine.Common.Samples
 
             var results = new List<SimpleReturnClass>();
             var errors = new List<string>();
-            foreach(var userId in userIds)
+            foreach (var userId in userIds)
             {
                 var response = await GetSimpleReturnClass(userId);
                 if (response.Succeeded)

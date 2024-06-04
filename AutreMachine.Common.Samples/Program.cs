@@ -1,4 +1,8 @@
-﻿using AutreMachine.Common.Samples;
+﻿using AutreMachine.Common.Samples.ServiceReponse;
+
+// ---------------
+// ServiceRepsonse
+// ---------------
 
 var test = new TestClass();
 

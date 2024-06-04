@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AutreMachine.Common;
 
-namespace AutreMachine.Common.Samples
+namespace AutreMachine.Common.Samples.ServiceReponse
 {
     public interface ITestClass
     {
