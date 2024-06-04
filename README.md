@@ -24,5 +24,13 @@ public class ServiceResponse<T>
 
 *Note* : Content holds the result, and can be null (in case of a **Ko** response).
 
-Ther are 2 helper methods : **Ok** and **Ko** that pass the Success state and the result
+There are 2 helper methods : **Ok** and **Ko** that pass the Success state and the result.
+
+### How can we use it ?
+
+Quite simply, functions will return a ServiceResponse<T> instead of only T class.
+And when the caller gets the response, it will test the **Succeeded** field to test the success.
+
+For instance :
+
 
