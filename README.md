@@ -7,5 +7,22 @@ ServiceReponse<T> is a generic class that can pass a result with a Success bool 
 The idea came from Go, where exception does not exist ; everything is carried through errors passed with function calls.
 Why not do the same in C# ? This notion is very elegant, and gets rid of lot of *try/catch* not always necessary.
 
+The class is basically structured this way :
 
+```
+public class ServiceResponse<T>
+{
+    [JsonPropertyName("succeeded")]
+    public bool Succeeded { get; set; }
+    [JsonPropertyName("message")]
+    public string Message { get; set; } = string.Empty;
+
+    [JsonPropertyName("content")]
+    public T? Content { get; set; } = default(T);
+...
+```
+
+*Note* : Content holds the result, and can be null (in case of a **Ko** response).
+
+Ther are 2 helper methods : **Ok** and **Ko** that pass the Success state and the result
 
