@@ -1,6 +1,8 @@
 ﻿using AutreMachine.Common;
 using AutreMachine.Common.Samples.APICaller;
 using AutreMachine.Common.Samples.ServiceReponse;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 // ---------------
 // ServiceRepsonse
@@ -59,7 +61,11 @@ Console.WriteLine("\nAPICaller\n-----------");
 
 Console.WriteLine("\nLM Studio\n-----------");
 var apiCallerLocalTest = new APICallerLocalTest();
-
+var resp = await apiCallerLocalTest.AskQuestion(new AIMessage[] { new AIMessage { role = "user", content = "combien font 2+2 ?" } }, 0);
+if (resp.Succeeded && resp.Content != null)
+    Console.WriteLine($"Success : {resp.Content}");
+else
+    Console.WriteLine($"Error : {resp.Message}");
 
 // Test on a local server
 Console.WriteLine("\nLocal API\n-----------");
@@ -68,3 +74,13 @@ if (joe.Succeeded && joe.Content != null)
     Console.WriteLine($"Success : {joe.Content}");
 else
     Console.WriteLine($"Error : {joe.Message}");
+
+// Test on a local server
+Console.WriteLine("\nLocal API 2\n-----------");
+var ask = await apiCallerLocalTest.AnswerClass(new AskClass { first="joe", last = "blogo", age = 42});
+if (joe.Succeeded && joe.Content != null)
+    Console.WriteLine($"Success : {JsonSerializer.Serialize(ask.Content)}");
+else
+    Console.WriteLine($"Error : {ask.Message}");
+
+return;

@@ -32,7 +32,7 @@ namespace AutreMachine.Common.Samples.APICaller
 
         public async Task<ServiceResponse<string>> AnswerName(string name)
         {
-            // HAck to prevent SSL error whenrunning on local machine
+            // Hack to prevent SSL error whenrunning on local machine
             HttpClientHandler clientHandler = new HttpClientHandler();
             clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
 
@@ -42,8 +42,33 @@ namespace AutreMachine.Common.Samples.APICaller
             var resp = await APICaller<string>.Post(client, "api/answername", "joe");
             return resp;
         }
+
+        public async Task<ServiceResponse<AnswerClass>> AnswerClass(AskClass ask)
+        {
+            // Hack to prevent SSL error whenrunning on local machine
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+
+            var client = new HttpClient(clientHandler);
+            client.BaseAddress = new Uri("https://localhost:7020");
+
+            var resp = await APICaller<AnswerClass>.Post(client, "api/answername3", ask);
+            return resp;
+        }
     }
 
+    public class AskClass
+    {
+        public string first { get; set; }
+        public string last { get; set; }
+        public int age { get; set; }
+    }
+
+    public class AnswerClass
+    {
+        public string answer { get; set; }
+        public int squareage { get; set; }
+    }
     
     public class LocalLMStudioAIRequest
     {
