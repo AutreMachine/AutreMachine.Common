@@ -4,7 +4,23 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Title>AutreMachine common set of tools</Title>
+    <Authors>AutreMachine, Christian Navelot</Authors>
+    <Company>AutreMachine</Company>
+    <Description>A common set of tools, comprising an APICaller class to call a REST service and convert into specific class, and a ServiceResponse class that allows to pass a Success condition and a message in case there is a problem.</Description>
+    <Copyright>(c) 2024 AutreMachine</Copyright>
+    <RepositoryUrl>https://github.com/AutreMachine/AutreMachine.Common</RepositoryUrl>
+    <PackageReleaseNotes>First version</PackageReleaseNotes>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\readme.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="polly" Version="8.4.0" />
