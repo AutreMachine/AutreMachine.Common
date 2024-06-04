@@ -50,3 +50,6 @@ public ServiceResponse<string> GetLastName(string firstName)
 You can find more samples here :
 [AutreMachine.Common samples](https://github.com/AutreMachine/AutreMachine.Common/tree/master/AutreMachine.Common.Samples)
 
+
+## APICaller
+*(to be completed)*
