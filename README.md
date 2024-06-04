@@ -36,5 +36,17 @@ Quite simply, functions will return a ServiceResponse<T> instead of only T class
 And when the caller gets the response, it will test the **Succeeded** field to test the success.
 
 For instance :
+```
+public ServiceResponse<string> GetLastName(string firstName)
+{
+    if (firstName == "Joe")
+        return ServiceResponse<string>.Ok("Blogo"); // Pass the result to the Ok return function
 
+    return ServiceResponse<string>.Ko($"Sorry, could not find the last name for '{firstName}... did you mean 'Joe' ?");
+
+}
+```
+
+You can find more samples here :
+[AutreMachine.Common samples](https://github.com/AutreMachine/AutreMachine.Common/tree/master/AutreMachine.Common.Samples)
 
