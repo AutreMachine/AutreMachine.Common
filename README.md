@@ -3,6 +3,10 @@
 A collection of several tools useful when creating Blazor projects.
 
 ## ServiceResponse
+When calling functions, there is always a question lurking : if my result is null, is it normal or is it because there was a problem in the function ?
+
+How can I have the result of the function **and** an indicator on if it worked well (and eventually a well designed error message) ?
+
 ServiceReponse<T> is a generic class that can pass a result with a Success bool (a bool indicating if the result is correct) and a Message string (to indicate the source of the problem in case the call is unsuccessful).
 
 The idea came from Go, where exception does not exist ; everything is carried through errors passed with function calls.
