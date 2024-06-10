@@ -167,7 +167,7 @@ namespace AutreMachine.Common
                     else
                     {
                         if (request.GetType().IsPrimitive || typeof(U) == typeof(string))
-                            req.Content = new StringContent(request?.ToString(),
+                            req.Content = new StringContent(request.ToString()??"",
                             Encoding.UTF8,
                             contentType);
                         else if (request is FormUrlEncodedContent)

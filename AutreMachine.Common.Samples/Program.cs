@@ -1,5 +1,6 @@
 ﻿using AutreMachine.Common;
 using AutreMachine.Common.Samples.APICaller;
+using AutreMachine.Common.Samples.PaginatedList;
 using AutreMachine.Common.Samples.ServiceReponse;
 using System;
 using System.Text.Json;
@@ -70,49 +71,5 @@ if (resp.Succeeded && resp.Content != null)
 else
     Console.WriteLine($"Error : {resp.Message}");
 
-// Test on a local server
-Console.WriteLine("\nLocal API\n-----------");
-var joe = await apiCallerLocalTest.AnswerName("Joe");
-if (joe.Succeeded && joe.Content != null)
-    Console.WriteLine($"Success : {joe.Content}");
-else
-    Console.WriteLine($"Error : {joe.Message}");
-
-// Test on a local server
-Console.WriteLine("\nLocal API 2\n-----------");
-var ask = await apiCallerLocalTest.AnswerClass(new AskClass { first = "joe", last = "blogo", age = 42 });
-if (joe.Succeeded && joe.Content != null)
-    Console.WriteLine($"Success : {JsonSerializer.Serialize(ask.Content)}");
-else
-    Console.WriteLine($"Error : {ask.Message}");
-
-var pdf = await apiCallerLocalTest.ExtractPDF();
-if (pdf.Succeeded && pdf.Content != null)
-{
-    Console.WriteLine($"Success : {JsonSerializer.Serialize(pdf.Content)}");
-}
-else
-    Console.WriteLine($"Error : {pdf.Message}");
-
-var extract = await apiCallerLocalTest.ExtractSkills(pdf.Content);
-if (extract.Succeeded && extract.Content != null)
-{
-    Console.WriteLine($"Success : {JsonSerializer.Serialize(extract.Content)}");
-}
-else
-    Console.WriteLine($"Error : {extract.Message}");
 
 return;
-
-public class SimpleBody
-{
-    public string body { get; set; }
-}
-
-public class UserSkills
-{
-    [JsonPropertyName("Technical_skills")]
-    public List<string> TechnicalSkills { get; set; } = new();
-    [JsonPropertyName("Soft_skills")]
-    public List<string> SoftSkills { get; set; } = new();
-}

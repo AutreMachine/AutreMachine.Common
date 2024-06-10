@@ -10,6 +10,12 @@ namespace AutreMachine.Common.Samples.APICaller
 {
     public class APICallerLocalTest
     {
+        /// <summary>
+        /// Testing LM Studio local server
+        /// </summary>
+        /// <param name="messages"></param>
+        /// <param name="temperature"></param>
+        /// <returns></returns>
         public async Task<ServiceResponse<string>> AskQuestion(AIMessage[] messages, float temperature = 0.7f)
         {
             var client = new HttpClient();
@@ -31,54 +37,6 @@ namespace AutreMachine.Common.Samples.APICaller
             return ServiceResponse<string>.Ko("No response from Local OpenAI");
         }
 
-        public async Task<ServiceResponse<string>> AnswerName(string name)
-        {
-
-            var client = new HttpClient();
-
-            client.BaseAddress = new Uri("https://localhost:7020");
-            var resp = await APICaller<string>.Get(client, "api/answername2", "joe");
-            //var resp = await APICaller<string>.Post(client, "api/answername", "joe");
-            return resp;
-        }
-
-        public async Task<ServiceResponse<AnswerClass>> AnswerClass(AskClass ask)
-        {
-
-            var client = new HttpClient();
-
-            client.BaseAddress = new Uri("https://localhost:7020");
-
-            var resp = await APICaller<AnswerClass>.Post(client, "api/answername3", ask);
-            return resp;
-        }
-
-        public async Task<ServiceResponse<string>> ExtractPDF()
-        {
-
-            var client = new HttpClient();
-
-            client.BaseAddress = new Uri("https://localhost:7020");
-            //var path = "F:\\Github\\WhizUp\\Whizup.Web\\Whizup.Web\\Content\\Temp\\2023_C-CV (en Français)_Yamina OUACHOUACH.pdf";
-            var path = "F:\\Github\\WhizUp\\Whizup.Web\\Whizup.Web\\Content\\Temp\\CV Christian NAVELOT 20240130.pdf";
-             // Encode base 64
-            var plainTextBytes = Encoding.UTF8.GetBytes(path);
-            var resp = await APICaller<string>.Get(client, "api/readpdffile", Convert.ToBase64String(plainTextBytes));
-            return resp;
-        }
-
-        public async Task<ServiceResponse<UserSkills>> ExtractSkills(string content)
-        {
-
-            var client = new HttpClient();
-
-            client.BaseAddress = new Uri("https://localhost:7020");
-            var req = new SimpleBody { body = content };
-            var skillsResp = await APICaller<UserSkills>.Post(client, "api/extractskills", req);
-
-            //var resp = await APICaller<string>.Get(client, "api/readpdffile", Convert.ToBase64String(plainTextBytes));
-            return skillsResp;
-        }
     }
 
     public class AskClass

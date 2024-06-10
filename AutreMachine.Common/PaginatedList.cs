@@ -5,8 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutreMachine.CommonTools
+namespace AutreMachine.Common
 {
+    /// <summary>
+    /// Manage paginated lists for displaying Blazor paged lists
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class PaginatedList<T> : List<T>
     {
         public int PageIndex { get; private set; }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutreMachine.CommonTools
+namespace AutreMachine.Common
 {
     public class DateTools
     {
