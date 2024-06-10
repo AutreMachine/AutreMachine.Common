@@ -57,3 +57,19 @@ You can find more samples here :
 
 ## APICaller
 *(to be completed)*
+
+## PaginatedList
+Provides a pagniated list, from a IQueryable data source(ideally a DBSet from a DBContext).
+It is very useful to display list of items on Razor pages.
+For instance you could use it as following :
+```
+ IOrderedQueryable<Message>? messages = null;
+ var messagesQuery = repository.GetAllQuery().Where(x => x.UserId == userId);
+
+messages = messagesQuery.OrderByDescending(x => x.DateCreated);
+
+var results = await PaginatedList<Message>.CreateAsync(messages, pageNumber ?? 1, pageSize);
+...
+```
+
+
