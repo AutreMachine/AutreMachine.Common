@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace AutreMachine.Common.Samples.APICaller
 {
@@ -32,36 +33,51 @@ namespace AutreMachine.Common.Samples.APICaller
 
         public async Task<ServiceResponse<string>> AnswerName(string name)
         {
-#if DEBUG
-            // Hack to prevent SSL error whenrunning on local machine
-            HttpClientHandler clientHandler = new HttpClientHandler();
-            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
 
-            var client = new HttpClient(clientHandler);
-#else
-      var client = new HttpClient();
-#endif
+            var client = new HttpClient();
+
             client.BaseAddress = new Uri("https://localhost:7020");
-            //var resp = await APICaller<string>.Get(client, "api/answername2", "joe");
-            var resp = await APICaller<string>.Post(client, "api/answername", "joe");
+            var resp = await APICaller<string>.Get(client, "api/answername2", "joe");
+            //var resp = await APICaller<string>.Post(client, "api/answername", "joe");
             return resp;
         }
 
         public async Task<ServiceResponse<AnswerClass>> AnswerClass(AskClass ask)
         {
-#if DEBUG
-            // Hack to prevent SSL error whenrunning on local machine
-            HttpClientHandler clientHandler = new HttpClientHandler();
-            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
 
-            var client = new HttpClient(clientHandler);
-#else
-      var client = new HttpClient();
-#endif
+            var client = new HttpClient();
+
             client.BaseAddress = new Uri("https://localhost:7020");
 
             var resp = await APICaller<AnswerClass>.Post(client, "api/answername3", ask);
             return resp;
+        }
+
+        public async Task<ServiceResponse<string>> ExtractPDF()
+        {
+
+            var client = new HttpClient();
+
+            client.BaseAddress = new Uri("https://localhost:7020");
+            //var path = "F:\\Github\\WhizUp\\Whizup.Web\\Whizup.Web\\Content\\Temp\\2023_C-CV (en Français)_Yamina OUACHOUACH.pdf";
+            var path = "F:\\Github\\WhizUp\\Whizup.Web\\Whizup.Web\\Content\\Temp\\CV Christian NAVELOT 20240130.pdf";
+             // Encode base 64
+            var plainTextBytes = Encoding.UTF8.GetBytes(path);
+            var resp = await APICaller<string>.Get(client, "api/readpdffile", Convert.ToBase64String(plainTextBytes));
+            return resp;
+        }
+
+        public async Task<ServiceResponse<UserSkills>> ExtractSkills(string content)
+        {
+
+            var client = new HttpClient();
+
+            client.BaseAddress = new Uri("https://localhost:7020");
+            var req = new SimpleBody { body = content };
+            var skillsResp = await APICaller<UserSkills>.Post(client, "api/extractskills", req);
+
+            //var resp = await APICaller<string>.Get(client, "api/readpdffile", Convert.ToBase64String(plainTextBytes));
+            return skillsResp;
         }
     }
 

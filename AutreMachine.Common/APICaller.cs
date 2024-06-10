@@ -11,6 +11,7 @@ using Polly;
 using Polly.Timeout;
 using System.Reflection.Metadata;
 using System.Net.Mime;
+using AutreMachine.Common;
 
 namespace AutreMachine.Common
 {
@@ -41,63 +42,46 @@ namespace AutreMachine.Common
             if (client == null)
                 return (ServiceResponse<T>.Ko("Http not provided"));
 
-            try
+            if (client.BaseAddress == null)
+                return ServiceResponse<T>.Ko("HTTP BaseAdress should not be empty.");
+
+            // Create the query in the form 
+            // .../param1/param2/param3/...
+            string finalQuery = CreateQuery(query, parameters);
+
+            HttpResponseMessage response = await client.GetAsync(finalQuery);
+            ServiceResponse<T>? resp = ServiceResponse<T>.Default;
+            if (response.IsSuccessStatusCode)
             {
-                client.DefaultRequestHeaders.Add("Host", "AutreMachine");
-                //client.DefaultRequestVersion = new Version("2.0");
-                
-                // Create the query
-                //string finalQuery = Path.Combine(parts);
-                string finalQuery = CreateQuery(query, parameters);
 
-                //HttpResponseMessage response = await client.GetAsync((finalQuery);
-                var request = new HttpRequestMessage(HttpMethod.Get,
-                    finalQuery);
-                request.Headers.Add("Accept", "*/*");
-                request.Headers.Add("User-Agent", "AutreMachine-Common");
+                string respStr = await response.Content.ReadAsStringAsync();
 
-                //var req = new HttpRequestMessage(HttpMethod.Get, finalQuery);
-                //req.Headers.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36");
-
-                var response = await client.SendAsync(request);
-
-                    //var str = HttpUtility.UrlEncode(JsonSerializer.Serialize(request));
-
-                ServiceResponse<T>? resp = ServiceResponse<T>.Default;
-                if (response.IsSuccessStatusCode)
+                try
                 {
-
-                    string respStr = await response.Content.ReadAsStringAsync();
-
-
-                    try
-                    {
-                        resp = JsonSerializer.Deserialize<ServiceResponse<T>>(respStr);
-                    }
-                    catch (Exception ex)
-                    {
-                        return (ServiceResponse<T>.Ko(ex.Message));
-                    }
+                    resp = JsonSerializer.Deserialize<ServiceResponse<T>>(respStr);
                 }
-                else
+                catch (Exception ex)
                 {
-                    var content = await response.Content.ReadAsStringAsync();
-                    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                    {
-                        return (ServiceResponse<T>.Ko("Unauthorized"));
-                    }
-                    return (ServiceResponse<T>.Ko("Error : " + response.StatusCode + " - " + content));
+                    return (ServiceResponse<T>.Ko(ex.Message));
                 }
-
-                if (resp == null)
-                    return ServiceResponse<T>.Ko("Could not deserialize");
-
-                return ServiceResponse<T>.Ok(resp.Content);
             }
-            catch (Exception ex)
+            else
             {
-                return ServiceResponse<T>.Ko("Error : " + ex.Message);
+                var content = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    return (ServiceResponse<T>.Ko("Unauthorized"));
+                }
+                //throw new UnauthorizedAccessException();
+
+                //throw new Exception("Error : " + response.StatusCode + " - " + content);
+                return (ServiceResponse<T>.Ko("Error : " + response.StatusCode + " - " + content));
             }
+
+            if (resp == null)
+                return ServiceResponse<T>.Ko("Could not deserialize");
+
+            return ServiceResponse<T>.Ok(resp.Content);
 
         }
 
@@ -147,9 +131,9 @@ namespace AutreMachine.Common
             {
                 var respStr = await response.Content.ReadAsStringAsync();
                 //if (request is IServiceResponse)
-                    resp = JsonSerializer.Deserialize<ServiceResponse<T>>(respStr);
+                resp = JsonSerializer.Deserialize<ServiceResponse<T>>(respStr);
                 //else
-                  //  resp = JsonSerializer.Deserialize<T>(respStr);
+                //  resp = JsonSerializer.Deserialize<T>(respStr);
 
             }
             else
@@ -161,9 +145,11 @@ namespace AutreMachine.Common
             return resp;
         }
 
-        public static async Task<ServiceResponse<T>> Post<U>(HttpClient client, string query, U request, bool isResponseServiceResponse = true, string? contentType = null) 
+        public static async Task<ServiceResponse<T>> Post<U>(HttpClient client, string query, U request, bool isResponseServiceResponse = true, string? contentType = null)
         {
             HttpResponseMessage? response = null;
+            if (client.BaseAddress == null)
+                return ServiceResponse<T>.Ko("HTTP BaseAdress should not be empty.");
 
             try
             {
@@ -175,10 +161,24 @@ namespace AutreMachine.Common
                         .Accept
                         .Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(contentType));
                     var req = new HttpRequestMessage(HttpMethod.Post, query);
-                    //var str = HttpUtility.UrlEncode(JsonSerializer.Serialize(request));
-                    req.Content = new StringContent(JsonSerializer.Serialize(request),
-                        Encoding.UTF8,
-                        contentType);
+                    var str = "";
+                    if (request == null)
+                        str = "";
+                    else
+                    {
+                        if (request.GetType().IsPrimitive || typeof(U) == typeof(string))
+                            req.Content = new StringContent(request?.ToString(),
+                            Encoding.UTF8,
+                            contentType);
+                        else if (request is FormUrlEncodedContent)
+                            req.Content = request as FormUrlEncodedContent;
+                        else
+                            req.Content = new StringContent(JsonSerializer.Serialize(request),
+                            Encoding.UTF8,
+                            contentType);
+                    }
+
+
 
                     response = await client.SendAsync(req);
                 }
@@ -194,15 +194,14 @@ namespace AutreMachine.Common
                         "application/json");
 
                     response = await client.SendAsync(req);
-                    //response = await client.PostAsJsonAsync(query, request);
                 }
 
                 ServiceResponse<T>? resp = ServiceResponse<T>.Default;
                 if (response != null && response.IsSuccessStatusCode)
                 {
                     var respStr = await response.Content.ReadAsStringAsync();
-                    
-                    // ry to deserialize
+
+                    // Try to deserialize
                     if (isResponseServiceResponse)
                         resp = JsonSerializer.Deserialize<ServiceResponse<T>?>(respStr);
                     else
