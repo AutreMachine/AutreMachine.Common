@@ -18,6 +18,11 @@ namespace AutreMachine.Common
     public class APICaller<T>
     {
         /// <summary>
+        /// Need to pass a Case Insensitive options (I used NEwtonsoft which is far more lenient on this subject)
+        /// </summary>
+        static JsonSerializerOptions serializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+        /// <summary>
         /// Call Get without parameters
         /// </summary>
         /// <param name="client"></param>
@@ -58,7 +63,7 @@ namespace AutreMachine.Common
 
                 try
                 {
-                    resp = JsonSerializer.Deserialize<ServiceResponse<T>>(respStr);
+                    resp = JsonSerializer.Deserialize<ServiceResponse<T>>(respStr, serializerOptions);
                 }
                 catch (Exception ex)
                 {
@@ -130,10 +135,7 @@ namespace AutreMachine.Common
             if (response.IsSuccessStatusCode)
             {
                 var respStr = await response.Content.ReadAsStringAsync();
-                //if (request is IServiceResponse)
-                resp = JsonSerializer.Deserialize<ServiceResponse<T>>(respStr);
-                //else
-                //  resp = JsonSerializer.Deserialize<T>(respStr);
+                resp = JsonSerializer.Deserialize<ServiceResponse<T>>(respStr, serializerOptions);
 
             }
             else
@@ -145,6 +147,16 @@ namespace AutreMachine.Common
             return resp;
         }
 
+        /// <summary>
+        /// Send a POST message 
+        /// </summary>
+        /// <typeparam name="U"></typeparam>
+        /// <param name="client"></param>
+        /// <param name="query"></param>
+        /// <param name="request"></param>
+        /// <param name="isResponseServiceResponse">True (by default) if it uses the ServiceResponse mechanism ; otherwise, pass false</param>
+        /// <param name="contentType"></param>
+        /// <returns></returns>
         public static async Task<ServiceResponse<T>> Post<U>(HttpClient client, string query, U request, bool isResponseServiceResponse = true, string? contentType = null)
         {
             HttpResponseMessage? response = null;
@@ -173,7 +185,7 @@ namespace AutreMachine.Common
                         else if (request is FormUrlEncodedContent)
                             req.Content = request as FormUrlEncodedContent;
                         else
-                            req.Content = new StringContent(JsonSerializer.Serialize(request),
+                            req.Content = new StringContent(JsonSerializer.Serialize(request, serializerOptions),
                             Encoding.UTF8,
                             contentType);
                     }
@@ -188,8 +200,7 @@ namespace AutreMachine.Common
                         .Accept
                         .Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
                     var req = new HttpRequestMessage(HttpMethod.Post, query);
-                    //var str = HttpUtility.UrlEncode(JsonSerializer.Serialize(request));
-                    req.Content = new StringContent(JsonSerializer.Serialize(request),
+                    req.Content = new StringContent(JsonSerializer.Serialize(request, serializerOptions),
                         Encoding.UTF8,
                         "application/json");
 
@@ -203,11 +214,11 @@ namespace AutreMachine.Common
 
                     // Try to deserialize
                     if (isResponseServiceResponse)
-                        resp = JsonSerializer.Deserialize<ServiceResponse<T>?>(respStr);
+                        resp = JsonSerializer.Deserialize<ServiceResponse<T>?>(respStr, serializerOptions);
                     else
                     {
                         // Try on T
-                        var content = JsonSerializer.Deserialize<T?>(respStr);
+                        var content = JsonSerializer.Deserialize<T?>(respStr, serializerOptions);
                         if (content == null)
                             resp = ServiceResponse<T>.Ko("Could not deserialize");
                         else
@@ -238,8 +249,7 @@ namespace AutreMachine.Common
             if (response.IsSuccessStatusCode)
             {
                 var respStr = await response.Content.ReadAsStringAsync();
-                //resp = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(respStr);
-                resp = JsonSerializer.Deserialize<T>(respStr);
+                resp = JsonSerializer.Deserialize<T>(respStr, serializerOptions);
             }
             else
             {
