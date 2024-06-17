@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutreMachine.Common", "Autr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutreMachine.Common.Samples", "AutreMachine.Common.Samples\AutreMachine.Common.Samples.csproj", "{D794D94D-369B-4A45-A5CC-D53166F31393}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutreMachine.Common.API.Samples", "AutreMachine.Common.API.Samples\AutreMachine.Common.API.Samples.csproj", "{A9F103BE-04A0-4245-B28E-282D4953E53C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{D794D94D-369B-4A45-A5CC-D53166F31393}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D794D94D-369B-4A45-A5CC-D53166F31393}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D794D94D-369B-4A45-A5CC-D53166F31393}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A9F103BE-04A0-4245-B28E-282D4953E53C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A9F103BE-04A0-4245-B28E-282D4953E53C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A9F103BE-04A0-4245-B28E-282D4953E53C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A9F103BE-04A0-4245-B28E-282D4953E53C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

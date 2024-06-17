@@ -35,6 +35,7 @@ namespace AutreMachine.Common
         public PaginatedVM(PaginatedList<T> list)
         {
             _list = list;
+            TotalPages = _list?.TotalPages;
         }
         public static async Task<PaginatedVM<T>> CreateAsync(IQueryable<T> source, int pageIndex, int pageSize)
         {

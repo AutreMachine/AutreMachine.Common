@@ -83,5 +83,16 @@ Console.WriteLine($"Displaying page {indexPage} of size {pageSize} :");
 foreach (var element in page)
     Console.WriteLine("- " + element.Name);
 
+// PaginatedView
+// -------------
+// Difference 
+Console.WriteLine("\nPaginated View\n-----------");
+var pageVM = PaginatedVM<TestElement>.Create(elementsQuery, indexPage, pageSize);
+Console.WriteLine($"Displaying page {indexPage} of size {pageSize} :");
+foreach (var element in page)
+    Console.WriteLine("- " + element.Name);
+Console.WriteLine($"Total number of pages : {pageVM.TotalPages}");
+
+
 
 return;
