@@ -173,10 +173,8 @@ namespace AutreMachine.Common
                         .Accept
                         .Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(contentType));
                     var req = new HttpRequestMessage(HttpMethod.Post, query);
-                    var str = "";
-                    if (request == null)
-                        str = "";
-                    else
+
+                    if (request != null)
                     {
                         if (request.GetType().IsPrimitive || typeof(U) == typeof(string))
                             req.Content = new StringContent(request.ToString()??"",

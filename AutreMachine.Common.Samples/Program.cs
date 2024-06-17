@@ -9,7 +9,7 @@ using static System.Net.WebRequestMethods;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 // ---------------
-// ServiceRepsonse
+// ServiceResponse
 // ---------------
 
 var test = new TestClass();
@@ -70,6 +70,18 @@ if (resp.Succeeded && resp.Content != null)
     Console.WriteLine($"Success : {resp.Content}");
 else
     Console.WriteLine($"Error : {resp.Message}");
+
+
+// PaginatedList
+// -------------
+Console.WriteLine("\nPaginatedList\n-----------");
+var elementsQuery = from element in new TestElementContext(500) select element;
+var indexPage = 3;
+var pageSize = 15;
+var page = PaginatedList<TestElement>.Create(elementsQuery, indexPage, pageSize);
+Console.WriteLine($"Displaying page {indexPage} of size {pageSize} :");
+foreach (var element in page)
+    Console.WriteLine("- " + element.Name);
 
 
 return;
