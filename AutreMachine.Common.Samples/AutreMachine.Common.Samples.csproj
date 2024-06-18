@@ -15,4 +15,8 @@
     <ProjectReference Include="..\AutreMachine.Common\AutreMachine.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="APICaller\" />
+  </ItemGroup>
+
 </Project>

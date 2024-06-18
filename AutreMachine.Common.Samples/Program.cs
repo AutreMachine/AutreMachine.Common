@@ -1,5 +1,4 @@
 ﻿using AutreMachine.Common;
-using AutreMachine.Common.Samples.APICaller;
 using AutreMachine.Common.Samples.PaginatedList;
 using AutreMachine.Common.Samples.ServiceReponse;
 using System;
@@ -62,10 +61,17 @@ else
 // APICALLER
 // ---------
 Console.WriteLine("\nAPICaller\n-----------");
+var http = new HttpClient();
+http.BaseAddress = new Uri("https://www.google.com");
+var respGoogle = await APICaller<string>.Get(http, "/");
+if (respGoogle.Succeeded && respGoogle.Content != null)
+    Console.WriteLine($"Success : {respGoogle.Content}");
+else
+    Console.WriteLine($"Error : {respGoogle.Message}");
 
 Console.WriteLine("\nLM Studio\n-----------");
-var apiCallerLocalTest = new APICallerLocalTest();
-var resp = await apiCallerLocalTest.AskQuestion(new AIMessage[] { new AIMessage { role = "user", content = "combien font 2+2 ?" } }, 0);
+var aiChain = new AIChain();
+var resp = await aiChain.AskQuestion<string>(new AIMessage[] { new AIMessage { role = "user", content = "combien font 2+2 ?" } }, 0);
 if (resp.Succeeded && resp.Content != null)
     Console.WriteLine($"Success : {resp.Content}");
 else
