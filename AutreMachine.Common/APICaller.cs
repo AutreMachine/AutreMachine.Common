@@ -15,10 +15,14 @@ using AutreMachine.Common;
 
 namespace AutreMachine.Common
 {
+    /// <summary>
+    /// Class used to call API endpoints and deserialize in return
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class APICaller<T>
     {
         /// <summary>
-        /// Need to pass a Case Insensitive options (I used NEwtonsoft which is far more lenient on this subject)
+        /// Need to pass a Case Insensitive options
         /// </summary>
         static JsonSerializerOptions serializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 

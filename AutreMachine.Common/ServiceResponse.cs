@@ -47,26 +47,31 @@ namespace AutreMachine.Common
         public static ServiceResponse<T> Default { get { return new ServiceResponse<T> { Content = default(T) }; } }
     }
 
-    public class ServiceResponseEmpty : ServiceResponse<bool>
+    public class ServiceResponseEmpty : IServiceResponse
     {
+
+         [JsonPropertyName("succeeded")]
+        public bool Succeeded { get; set; }
+        [JsonPropertyName("message")]
+        public string Message { get; set; } = string.Empty;
+
 
         public static ServiceResponseEmpty Ok()
         {
             return new()
             {
                 Succeeded = true,
-                Message = "",
-                Content = true
+                Message = ""
+                
             };
         }
 
-        public new static ServiceResponseEmpty Ko(string message)
+        public static ServiceResponseEmpty Ko(string message)
         {
             return new()
             {
                 Succeeded = false,
-                Message = message,
-                Content = false
+                Message = message
             };
         }
     }

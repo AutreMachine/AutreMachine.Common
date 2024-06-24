@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace AutreMachine.Common
 {
     public interface IPaginatedVM<T>
     {
-        int? TotalPages { get; set; }
+        int TotalPages { get; set; }
     }
 
     /// <summary>
@@ -19,36 +20,59 @@ namespace AutreMachine.Common
     /// <typeparam name="T"></typeparam>
     public class PaginatedVM<T> : IPaginatedVM<T>
     {
-        PaginatedList<T>? _list;
-
-        public PaginatedList<T>? List
-        {
-            get => _list;
-            set { _list = value; TotalPages = _list?.TotalPages; }
-        }
-
-        public int? TotalPages { get; set; }
+        public int PageIndex { get; set; }
+        
+        public int TotalPages { get; set; }
 
         public PaginatedVM()
+        { }
+
+         public List<T>? List {get; set;}
+
+        
+
+        public PaginatedVM(List<T> items, int count, int pageIndex, int pageSize)
         {
+            PageIndex = pageIndex;
+            TotalPages = (int)Math.Ceiling(count / (double)pageSize);
+
+            if (List == null )
+                List = new List<T>();
+
+            List.AddRange(items);
         }
-        public PaginatedVM(PaginatedList<T> list)
+        public PaginatedVM(List<T> items, int totalPages, int pageIndex)
         {
-            _list = list;
-            TotalPages = _list?.TotalPages;
+            PageIndex = pageIndex;
+            TotalPages = totalPages;
+
+            if (List == null )
+                List = new List<T>();
+
+            List.AddRange(items);
         }
+  
+        
+
+        public bool HasPreviousPage => PageIndex > 1;
+
+        public bool HasNextPage => PageIndex < TotalPages;
+
         public static async Task<PaginatedVM<T>> CreateAsync(IQueryable<T> source, int pageIndex, int pageSize)
         {
-            var list = await PaginatedList<T>.CreateAsync(source, pageIndex, pageSize);
-            return new PaginatedVM<T>(list);
+            var count = await source.CountAsync();
+            var items = await source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+            return new PaginatedVM<T>(items, count, pageIndex, pageSize);
         }
 
         public static PaginatedVM<T> Create(IEnumerable<T> source, int pageIndex, int pageSize)
         {
-            var list = PaginatedList<T>.Create(source, pageIndex, pageSize);
-            return new PaginatedVM<T>(list);
-
+            var count = source.Count();
+            var items = source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            return new PaginatedVM<T>(items, count, pageIndex, pageSize);
         }
+
+         
     }
 
 }
