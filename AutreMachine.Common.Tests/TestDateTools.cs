@@ -29,5 +29,16 @@ namespace AutreMachine.Common.Tests
                 Console.WriteLine("DateUTC is UTC");
 
         }
+
+        [Test]
+        public void Test_Timestamp()
+        {
+            var date = DateTime.Now;
+            var timestamp1 = DateTools.DateTimeToTimeStamp(date);
+            var timestamp2 = DateTools.AddTimeSpanToTimeStamp(timestamp1, new TimeSpan(1, 0, 0));
+            var date2 = DateTools.TimeStampToDateTime(timestamp2);
+            Console.WriteLine($"Comparing {date} to {date2}");
+
+        }
     }
 }

@@ -46,6 +46,13 @@ namespace AutreMachine.Common
             return dtDateTime;
         }
 
+        public static long AddTimeSpanToTimeStamp(long timestamp, TimeSpan timeSpan)
+        {
+            var date = TimeStampToDateTime(timestamp);
+            date = date.Add(timeSpan);
+            return DateTimeToTimeStamp(date);
+        }
+
         public static long DateTimeToTimeStamp(DateTime date)
         {
             long epoch = (date.Ticks - 621355968000000000) / 10000000;
