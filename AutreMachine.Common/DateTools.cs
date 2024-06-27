@@ -40,9 +40,9 @@ namespace AutreMachine.Common
 
             var maxNbSeconds = DateTime.MaxValue.Subtract(dtDateTime).TotalSeconds;
             if (unixTimeStamp > maxNbSeconds)
-                dtDateTime = dtDateTime.AddMilliseconds(unixTimeStamp).ToLocalTime();
+                dtDateTime = dtDateTime.AddMilliseconds(unixTimeStamp).ToUniversalTime();
             else
-                dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+                dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToUniversalTime();
             return dtDateTime;
         }
 
