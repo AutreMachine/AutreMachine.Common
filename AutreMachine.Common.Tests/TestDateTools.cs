@@ -22,6 +22,12 @@ namespace AutreMachine.Common.Tests
             Assert.That(date2.ToString() == date.ToString());
             Console.WriteLine($"Comparing {dateUTC.Ticks} to {dateUTC2.Ticks}");
             Assert.That(dateUTC.ToString() == dateUTC2.ToString());
+
+            if (DateTools.IsUTC(date))
+                Console.WriteLine("Date is UTC");
+            if (DateTools.IsUTC(dateUTC))
+                Console.WriteLine("DateUTC is UTC");
+
         }
     }
 }

@@ -52,6 +52,13 @@ namespace AutreMachine.Common
             return epoch;
         }
 
+        public static bool IsUTC(DateTime date)
+        {
+            
+            var compareUTC = new DateTime(date.Ticks, DateTimeKind.Utc);
+            return date.ToLocalTime() == compareUTC.ToLocalTime();
+        }
+
         /// <summary>
         /// Creates a datetime from DateStart and NumDay
         /// </summary>
