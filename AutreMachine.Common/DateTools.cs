@@ -93,5 +93,58 @@ namespace AutreMachine.Common
             var minutes = (int)((hours - (double)hoursInt) * 60.0);
             return new TimeSpan(hoursInt, minutes, 0);
         }
+
+        /// <summary>
+        /// Displays date under : 2days... or 2 hours...
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public static string VeryShortDate(DateTime date, bool isShort = false)
+        {
+            var res = "";
+            TimeSpan delta;
+            bool isPast = false;
+            // Get the delta
+            if (DateTime.UtcNow < date)
+            {
+                // in the future
+                delta = date.Subtract(DateTime.UtcNow);
+            }
+            else
+            {
+                delta = DateTime.Now.Subtract(date);
+                isPast = true;
+            }
+            var days = isShort ? "d" : "days";
+            var day = isShort ? "d" : "day";
+            var hours = isShort ? "h" : "hrs";
+            var hour = isShort ? "h" : "hr";
+            var minutes = isShort ? "m" : "mins";
+            var minute = isShort ? "m" : "min";
+
+            if (delta.Days > 999)
+                res = $"<i class='fa-solid fa-infinity'></i> {days}";
+            else if (delta.Days > 1)
+                res = $"{delta.Days} {days}";
+            else if (delta.Days == 1)
+                res = $"1 {day}";
+            else if (delta.Hours > 1)
+                res = $"{delta.Hours} {hours}";
+            else if (delta.Hours == 1)
+                res = $"1 {hour}";
+            else if (delta.Minutes > 1)
+                res = $"{delta.Minutes} {minute}";
+            else if (delta.Minutes == 1)
+                res = "1 min";
+            else
+                res = $"{delta.Seconds} s";
+
+            if (isPast && !isShort)
+                res = res + " ago";
+
+            return res;
+
+        }
+
     }
 }
