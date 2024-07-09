@@ -99,22 +99,35 @@ namespace AutreMachine.Common
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        public static string VeryShortDate(DateTime date, bool isShort = false)
+        public static string VeryShortDate(DateTime date, bool isShort = false, DateTime? refDate = null)
         {
             var res = "";
             TimeSpan delta;
             bool isPast = false;
             // Get the delta
-            if (DateTime.UtcNow < date)
+            DateTime now = DateTime.UtcNow;
+            if (refDate != null)
+                now = refDate.Value;
+            else
+            {
+                if (!IsUTC(date))
+                    now = DateTime.Now;
+            }
+
+            if (now < date)
             {
                 // in the future
-                delta = date.Subtract(DateTime.UtcNow);
+                delta = date.Subtract(now);
             }
             else
             {
-                delta = DateTime.Now.Subtract(date);
+                delta = now.Subtract(date);
                 isPast = true;
             }
+            var years = isShort ? "y" : "years";
+            var year = isShort ? "y" : "year";
+            var months = isShort ? "m" : "months";
+            var month = isShort ? "m" : "month";
             var days = isShort ? "d" : "days";
             var day = isShort ? "d" : "day";
             var hours = isShort ? "h" : "hrs";
@@ -122,8 +135,34 @@ namespace AutreMachine.Common
             var minutes = isShort ? "m" : "mins";
             var minute = isShort ? "m" : "min";
 
-            if (delta.Days > 999)
+            // time elapsed
+            var monthsElapsed = 0; // (int)(delta.TotalDays/30.0);
+            if (isPast)
+                for (int i = 0; i < delta.TotalDays; i++)
+                {
+                    var current = date.AddDays(i);
+                    if (current.Day == now.Day && current.Month < now.Month)
+                        monthsElapsed++;
+                }
+            else
+                for (int i = 0; i < delta.TotalDays; i++)
+                {
+                    var current = now.AddDays(i);
+                    if (current.Day == date.Day && current.Month < date.Month)
+                        monthsElapsed++;
+                }
+            var yearsElapsed = (int)(delta.TotalDays / 365.0);
+
+            if (delta.Days > 9999)
                 res = $"<i class='fa-solid fa-infinity'></i> {days}";
+            else if (yearsElapsed > 1) 
+                res = $"{yearsElapsed} {years}";
+            else if (yearsElapsed == 1)
+                res = $"{yearsElapsed} {year}";
+            else if (monthsElapsed > 1) 
+                res = $"{monthsElapsed} {months}";
+            else if (monthsElapsed == 1)
+                res = $"1 {month}";
             else if (delta.Days > 1)
                 res = $"{delta.Days} {days}";
             else if (delta.Days == 1)

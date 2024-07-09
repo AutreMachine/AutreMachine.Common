@@ -40,5 +40,58 @@ namespace AutreMachine.Common.Tests
             Console.WriteLine($"Comparing {date} to {date2}");
 
         }
+
+        [Test]
+        public void Test_VeryShortDate()
+        {
+            // Years
+            var now = DateTime.Now;
+            var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+            var since = date.AddYears(-3);
+            var str = DateTools.VeryShortDate(since);
+
+            Console.WriteLine($"{since} : {str}");
+            Assert.That(str, Is.EqualTo("3 years ago"));
+
+            since = date.AddYears(-1);
+            str = DateTools.VeryShortDate(since);
+
+            Console.WriteLine($"{since} : {str}");
+            Assert.That(str, Is.EqualTo("1 year ago"));
+
+            // Months
+            since = date.AddMonths(-6);
+            str = DateTools.VeryShortDate(since);
+
+            Console.WriteLine($"{since} : {str}");
+            Assert.That(str, Is.EqualTo("6 months ago"));
+
+            since = date.AddDays(-65);
+            str = DateTools.VeryShortDate(since);
+
+            Console.WriteLine($"{since} : {str}");
+            Assert.That(str, Is.EqualTo("2 months ago"));
+
+            since = date.AddMonths(-1);
+            str = DateTools.VeryShortDate(since);
+
+            Console.WriteLine($"{since} : {str}");
+            Assert.That(str, Is.EqualTo("1 month ago"));
+
+            // Days
+            since = date.AddDays(-1);
+            str = DateTools.VeryShortDate(since); //, false, date);
+            var elapsed = date.Subtract(since).Days;
+
+            Console.WriteLine($"{since} : {str}");
+            Assert.That(str, Is.EqualTo("1 day ago"));
+
+            since = date.AddDays(1);
+            str = DateTools.VeryShortDate(since);
+
+            Console.WriteLine($"{since} : {str}");
+            Assert.That(str, Is.EqualTo("1 day"));
+
+        }
     }
 }
