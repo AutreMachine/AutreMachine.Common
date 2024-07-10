@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AutreMachine.Common.Razor
 {
-    public abstract class BaseClass : IBaseClass //, ICloneable
+    public abstract class BaseClass : IBaseIdClass //, ICloneable
     {
         public int Id { get; set; }
         public DateTime DateCreated { get; set; }

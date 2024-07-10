@@ -3,7 +3,7 @@
 
 namespace AutreMachine.Common.Razor.Test
 {
-    public class TestClass : BaseClass, IBaseClass
+    public class TestClass : BaseClass, IBaseIdClass
     {
         public string Name { get; set; } 
         public string Description { get; set; }

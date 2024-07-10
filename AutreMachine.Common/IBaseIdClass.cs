@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutreMachine.Common.Razor
+namespace AutreMachine.Common
 {
-    public interface IBaseClass
+    public interface IBaseIdClass
     {
         int Id { get; set; }
-        DateTime DateCreated { get; set; }
         
     }
 
