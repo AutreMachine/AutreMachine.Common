@@ -1,0 +1,152 @@
+﻿@page "/testcrud"
+@using Microsoft.AspNetCore.Components.Forms
+@using AutreMachine.Common
+@using AutreMachine.Common.Razor.Test
+
+
+
+
+<h3>Manage TestClass</h3>
+
+<TableCrud @ref="tableCrud" 
+           U="TestClass"
+           GetAllDelegate="async () => await GetAllTestClass()"
+           AddDelegate="async (TestClass instance) => await AddTestClass(instance.Name)"
+           UpdateDelegate="async (TestClass instance) => await UpdateTestClass(instance.Id, instance.Name)"
+           DeleteDelegate="async (int id) => await DeleteTestClass(id)"
+           Context="instance">
+    <HeaderTemplate>
+        <td>
+            Name
+        </td>
+        <td>
+            Description
+        </td>
+        <td>
+            Category
+        </td>
+    </HeaderTemplate>
+    <RowTemplate>
+        <td>
+            @instance.Name
+        </td>
+        <td>
+            @instance.Description
+        </td>
+        <td>
+            @if (instance.Category != null)
+            {
+                <b>@instance.Category.Name</b>
+            }
+            else
+            {
+                <i>- unknown -</i>
+            }
+        </td>
+    </RowTemplate>
+    <ModelComponent>
+        <dt>Category</dt>
+        <dd>
+            @if (instance != null)
+            {
+                <select @bind="instance.CategoryId" class="form-select">
+                    @if (categories != null)
+                    {
+                        foreach (var category in categories)
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    }
+                </select>
+            }
+        </dd>
+        <dt>Name</dt>
+        <dd>
+            <InputText @bind-Value="@instance.Name"></InputText>
+        </dd>
+        <dt>Description</dt>
+        <dd>
+            <InputText @bind-Value="@instance.Description"></InputText>
+        </dd>
+    </ModelComponent>
+
+</TableCrud>
+
+
+
+
+@code {
+    private List<TestClass> items;
+    TableCrud<TestClass>? tableCrud;
+
+    TestClass? editModel;
+    TestClass? addModel = new();
+    List<TestCategory>? categories;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await base.OnInitializedAsync();
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (tableCrud != null)
+            {
+                categories = new List<TestCategory>();
+                var categ1 = new TestCategory { Id = 1, Name = "categ1" };
+                var categ2 = new TestCategory { Id = 2, Name = "categ2" };
+                categories.Add(categ1);
+                categories.Add(categ2);
+
+
+                items = new List<TestClass>();
+                items.Add(new TestClass { Id = 1, Name = "Joe", Description = "un gentil gars", CategoryId = 1, Category = categ1 });
+                items.Add(new TestClass { Id = 2, Name = "Poilade", Description = "pas cool", CategoryId = 2, Category = categ2 });
+                //tableCrud.SetData(items);
+            }
+
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    #region CRUD functions
+    private async Task<ServiceResponse<List<TestClass>>> GetAllTestClass()
+    {
+        return ServiceResponse<List<TestClass>>.Ok(items);
+    }
+
+    private async Task<ServiceResponse<TestClass>> AddTestClass(string name)
+    {
+        var newInstance = new TestClass { Name = name };
+        newInstance.Id = items.Select(x => x.Id).Max() + 1;
+        items.Add(newInstance);
+
+        return ServiceResponse<TestClass>.Ok(newInstance);
+    }
+
+    private async Task<ServiceResponse<TestClass>> UpdateTestClass(int id, string name)
+    {
+        var instance = items.Where(x => x.Id == id).FirstOrDefault();
+        if (instance == null)
+            return ServiceResponse<TestClass>.Ko("item not found");
+
+        instance.Name = name;
+
+        return ServiceResponse<TestClass>.Ok(instance);
+    }
+
+    private async Task<ServiceResponseEmpty> DeleteTestClass(int id)
+    {
+        var instance = items.Where(x => x.Id == id).FirstOrDefault();
+        if (instance == null)
+            return ServiceResponseEmpty.Ko("item not found");
+
+        items.Remove(instance);
+        return ServiceResponseEmpty.Ok();
+    }
+    #endregion
+
+}
