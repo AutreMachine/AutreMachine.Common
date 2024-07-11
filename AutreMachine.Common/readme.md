@@ -1,0 +1,1 @@
+A common set of tools, comprising an APICaller class to call a REST service and convert into specific class, and a ServiceResponse class that allows to pass a Success condition and a message in case there is a problem.

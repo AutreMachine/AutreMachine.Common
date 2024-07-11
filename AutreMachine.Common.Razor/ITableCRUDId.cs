@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AutreMachine.Common
 {
-    public interface IBaseIdClass
+    public interface ITableCRUDId
     {
         int Id { get; set; }
         

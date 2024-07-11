@@ -12,11 +12,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AutreMachine.Common\AutreMachine.Common.csproj" />
+    <Folder Include="APICaller\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="APICaller\" />
+    <ProjectReference Include="..\AutreMachine.Common\AutreMachine.Common.csproj" />
   </ItemGroup>
 
 </Project>

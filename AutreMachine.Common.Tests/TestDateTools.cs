@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using AutreMachine.Common;
 
 namespace AutreMachine.Common.Tests
 {
