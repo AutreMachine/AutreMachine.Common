@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
 	  <TargetFramework>net8.0</TargetFramework>
@@ -15,25 +15,24 @@
 	  <PackageReadmeFile>readme.md</PackageReadmeFile>
 	  <PackageLicenseFile>License.txt</PackageLicenseFile>
 	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-	  <Version>1.0.0</Version>
+	  <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="License.txt" />
-    <None Remove="readme.md" />
+	  <None Include="readme.md" Pack="true" PackagePath="\" />
+	  <None Include="License.txt" Pack="true" PackagePath="" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="License.txt" />
-    <Content Include="readme.md" />
-  </ItemGroup>
+
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
+
+
   <ItemGroup>
-    <PackageReference Include="AutreMachine.Common" Version="1.2.6" />
+    <PackageReference Include="AutreMachine.Common" Version="1.2.7" />
   </ItemGroup>
 
 
