@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
+	  <TargetFramework>net8.0</TargetFramework>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <Nullable>enable</Nullable>
 	  <Title>AutreMachine common Razor set of tools</Title>
 	  <Authors>AutreMachine, Christian Navelot</Authors>
 	  <Company>AutreMachine</Company>
@@ -14,22 +14,26 @@
 	  <PackageReadmeFile>readme.md</PackageReadmeFile>
 	  <PackageLicenseFile>License.txt</PackageLicenseFile>
 	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-	  <Version>1.0.3</Version>
+	  <Version>1.0.2</Version>
   </PropertyGroup>
 
-  <ItemGroup>
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+
+	
+	<ItemGroup>
 	  <None Include="readme.md" Pack="true" PackagePath="\" />
 	  <None Include="License.txt" Pack="true" PackagePath="" />
   </ItemGroup>
 
 
-  <ItemGroup>
-    <SupportedPlatform Include="browser" />
-  </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AutreMachine.Common" Version="1.2.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.7" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AutreMachine.Common" Version="1.2.7" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.7" />
+	</ItemGroup>
+
+
 
 </Project>
