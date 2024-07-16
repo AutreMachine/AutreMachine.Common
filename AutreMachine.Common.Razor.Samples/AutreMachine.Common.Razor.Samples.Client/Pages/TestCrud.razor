@@ -8,8 +8,8 @@
 <TableCrud @ref="tableCrud" 
            U="TestClass"
            GetAllDelegate="async () => await GetAllTestClass()"
-           AddDelegate="async (TestClass instance) => await AddTestClass(instance.Name)"
-           UpdateDelegate="async (TestClass instance) => await UpdateTestClass(instance.Id, instance.Name)"
+           AddDelegate="async (TestClass instance) => await AddTestClass(instance.Name, instance.CategoryId)"
+           UpdateDelegate="async (TestClass instance) => await UpdateTestClass(instance.Id, instance.Name, instance.CategoryId)"
            DeleteDelegate="async (int id) => await DeleteTestClass(id)"
            Context="instance">
     <HeaderTemplate>
@@ -102,7 +102,7 @@
         {
             if (tableCrud != null)
             {
-               /* categories = new List<TestCategory>();
+                /* categories = new List<TestCategory>();
                 var categ1 = new TestCategory { Id = 1, Name = "categ1" };
                 var categ2 = new TestCategory { Id = 2, Name = "categ2" };
                 categories.Add(categ1);
@@ -113,7 +113,7 @@
                 items.Add(new TestClass { Id = 1, Name = "Joe", Description = "un gentil gars", CategoryId = 1, Category = categ1 });
                 items.Add(new TestClass { Id = 2, Name = "Poilade", Description = "pas cool", CategoryId = 2, Category = categ2 });
                 //tableCrud.SetData(items);
-                */
+            */
             }
 
         }
@@ -126,22 +126,26 @@
         return ServiceResponse<List<TestClass>>.Ok(items);
     }
 
-    private async Task<ServiceResponse<TestClass>> AddTestClass(string name)
+    private async Task<ServiceResponse<TestClass>> AddTestClass(string name, int categ)
     {
-        var newInstance = new TestClass { Name = name };
+        var newInstance = new TestClass { Name = name, CategoryId = categ };
         newInstance.Id = items.Select(x => x.Id).Max() + 1;
+        newInstance.Category = categories.Find(x => x.Id == categ);
+
         items.Add(newInstance);
 
         return ServiceResponse<TestClass>.Ok(newInstance);
     }
 
-    private async Task<ServiceResponse<TestClass>> UpdateTestClass(int id, string name)
+    private async Task<ServiceResponse<TestClass>> UpdateTestClass(int id, string name, int categ)
     {
         var instance = items.Where(x => x.Id == id).FirstOrDefault();
         if (instance == null)
             return ServiceResponse<TestClass>.Ko("item not found");
 
         instance.Name = name;
+        instance.CategoryId = categ;
+        instance.Category = categories.Find(x=>x.Id == categ);
 
         return ServiceResponse<TestClass>.Ok(instance);
     }

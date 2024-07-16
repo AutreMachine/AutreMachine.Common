@@ -24,6 +24,8 @@ namespace AutreMachine.Common
         
         public int TotalPages { get; set; }
 
+        public int TotalItems { get; set; }
+
         public PaginatedVM()
         { }
 
@@ -34,6 +36,7 @@ namespace AutreMachine.Common
         public PaginatedVM(List<T> items, int count, int pageIndex, int pageSize)
         {
             PageIndex = pageIndex;
+            TotalItems = count;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
 
             if (List == null )
@@ -45,6 +48,7 @@ namespace AutreMachine.Common
         {
             PageIndex = pageIndex;
             TotalPages = totalPages;
+            TotalItems = items.Count;
 
             if (List == null )
                 List = new List<T>();

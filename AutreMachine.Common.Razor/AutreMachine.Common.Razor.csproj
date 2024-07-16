@@ -28,8 +28,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutreMachine.Common" Version="1.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AutreMachine.Common\AutreMachine.Common.csproj" />
   </ItemGroup>
 
 </Project>

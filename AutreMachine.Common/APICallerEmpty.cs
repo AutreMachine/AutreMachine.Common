@@ -7,8 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Text.Json;
-using Polly;
-using Polly.Timeout;
 using System.Reflection.Metadata;
 using System.Net.Mime;
 using AutreMachine.Common;
