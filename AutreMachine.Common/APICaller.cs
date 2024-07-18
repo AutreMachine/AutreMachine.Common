@@ -30,7 +30,7 @@ namespace AutreMachine.Common
         /// <param name="client"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static async Task<ServiceResponse<T>> Get(HttpClient client, string query)
+        public static async Task<ServiceResponse<T>> Get(HttpClient? client, string query)
         {
             return await Get(client, query, new object[] { });
         }
@@ -130,8 +130,14 @@ namespace AutreMachine.Common
             return finalQuery;
         }
 
-        public static async Task<ServiceResponse<T>> Put<U>(HttpClient client, string query, U? request)
+        public static async Task<ServiceResponse<T>> Put<U>(HttpClient? client, string query, U? request)
         {
+             if (client == null)
+                return (ServiceResponse<T>.Ko("Http not provided"));
+
+            if (client.BaseAddress == null)
+                return ServiceResponse<T>.Ko("HTTP BaseAdress should not be empty.");
+
             HttpResponseMessage response = await client.PutAsJsonAsync(query, request);
             ServiceResponse<T>? resp = ServiceResponse<T>.Default;
             if (response.IsSuccessStatusCode)
@@ -159,8 +165,14 @@ namespace AutreMachine.Common
         /// <param name="isResponseServiceResponse">True (by default) if it uses the ServiceResponse mechanism ; otherwise, pass false</param>
         /// <param name="contentType"></param>
         /// <returns></returns>
-        public static async Task<ServiceResponse<T>> Post<U>(HttpClient client, string query, U request, bool isResponseServiceResponse = true, string? contentType = null)
+        public static async Task<ServiceResponse<T>> Post<U>(HttpClient? client, string query, U request, bool isResponseServiceResponse = true, string? contentType = null)
         {
+             if (client == null)
+                return (ServiceResponse<T>.Ko("Http not provided"));
+
+            if (client.BaseAddress == null)
+                return ServiceResponse<T>.Ko("HTTP BaseAdress should not be empty.");
+
             HttpResponseMessage? response = null;
             if (client.BaseAddress == null)
                 return ServiceResponse<T>.Ko("HTTP BaseAdress should not be empty.");
@@ -240,8 +252,14 @@ namespace AutreMachine.Common
         }
 
 
-        public static async Task<ServiceResponse<T>> Delete(HttpClient client, string query, params object[] parameters)
+        public static async Task<ServiceResponse<T>> Delete(HttpClient? client, string query, params object[] parameters)
         {
+             if (client == null)
+                return (ServiceResponse<T>.Ko("Http not provided"));
+
+            if (client.BaseAddress == null)
+                return ServiceResponse<T>.Ko("HTTP BaseAdress should not be empty.");
+
             string finalQuery = CreateQuery(query, parameters);
 
             HttpResponseMessage response = await client.DeleteAsync(finalQuery);
