@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using AutreMachine.Common;
 
-namespace AutreMachine.Common.Tests
+namespace AutreMachine.Common.Tests.Common
 {
     public class Tests
     {

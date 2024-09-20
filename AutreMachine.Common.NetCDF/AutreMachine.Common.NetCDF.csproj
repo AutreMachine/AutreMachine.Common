@@ -4,33 +4,35 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Title>AutreMachine common set of tools</Title>
+
+		<Title>AutreMachine NetCDF tools</Title>
 		<Authors>AutreMachine, Christian Navelot</Authors>
 		<Company>AutreMachine</Company>
-		<Description>A common set of tools, comprising an APICaller class to call a REST service and convert into specific class, and a ServiceResponse class that allows to pass a Success condition and a message in case there is a problem.</Description>
+		<Description>A set of tools used to read a .nc file and convert it into a usable POCO object.</Description>
 		<Copyright>(c) 2024 AutreMachine</Copyright>
 		<RepositoryUrl>https://github.com/AutreMachine/AutreMachine.Common</RepositoryUrl>
 		<PackageReleaseNotes>First version</PackageReleaseNotes>
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
 		<PackageLicenseFile>License.txt</PackageLicenseFile>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Version>1.2.9</Version>
+		<Version>1.0.0</Version>
+
 	</PropertyGroup>
 
+	
 	<ItemGroup>
-		<None Include="readme.md" Pack="true" PackagePath="\" />
 		<None Include="License.txt" Pack="true" PackagePath="" />
+		<None Include="readme.md" Pack="true" PackagePath="" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="readme.md">
+		<PackageReference Include="SDSLite" Version="3.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="netcdf.dll">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
-		<PackageReference Include="System.Runtime.Caching" Version="8.0.0" />
+		</Resource>
 	</ItemGroup>
 
 </Project>
