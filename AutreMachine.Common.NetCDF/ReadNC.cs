@@ -10,7 +10,7 @@ namespace AutreMachine.Common.NetCDF
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="U"></typeparam>
-    public class ReadNC<T, U> where T : new() where U:INumber<U>, IMultiplyOperators<U,double,double>
+    public class ReadNC<T, U> where T : new() where U:INumber<U>
     {
         string path;
         T? results;
@@ -22,11 +22,13 @@ namespace AutreMachine.Common.NetCDF
         long[]? timeList = null;
         Dictionary<string, float>? data = null;
         U[,,]? inter = null;
+        Func<U, double, U> _multiply;
 
-        public ReadNC(string path)
+        public ReadNC(string path, Func<U, double, U> multiply)
         {
             this.path = path;
             results = default(T);
+            _multiply = multiply;
         }
 
         /// <summary>
@@ -143,29 +145,33 @@ namespace AutreMachine.Common.NetCDF
         /// <param name="lat"></param>
         /// <param name="time"></param>
         /// <returns></returns>
-        public ServiceResponse<double> GetInterpolation(double lon, double lat, long time)
+        public ServiceResponse<U> GetInterpolation(double lon, double lat, long time)
         {
             if (lonList == null)
-                return ServiceResponse<double>.Ko("Lon is null");
+                return ServiceResponse<U>.Ko("Lon is null");
             if (latList == null)
-                return ServiceResponse<double>.Ko("Lat is null");
+                return ServiceResponse<U>.Ko("Lat is null");
             if (timeList == null)
-                return ServiceResponse<double>.Ko("Time is null");
+                return ServiceResponse<U>.Ko("Time is null");
             if (inter == null)
-                return ServiceResponse<double>.Ko("Data is null");
+                return ServiceResponse<U>.Ko("Data is null");
 
             // Search values
             var lons = getIndexLimits(lonList, lon);
             var lats = getIndexLimits(latList, lat);
             var times = getIndexLimits(timeList, time);
             if (lons == null || lats == null || times == null)
-                return ServiceResponse<double>.Ko("One of the dimension is null");
+                return ServiceResponse<U>.Ko("One of the dimension is null");
 
             // Wge should get 2^3 = 8 values from which to interpolate
             // Usually the values are : time|lat|lon : need to confirm !!
-            var xd = (lon - lons.Value.v1) / (lons.Value.v2 - lons.Value.v1);
-            var yd = (lat - lats.Value.v1) / (lats.Value.v2 - lats.Value.v1);
-            var zd = (time - times.Value.v1) / (times.Value.v2 - times.Value.v1);
+            var xd = (lon - lonList[lons.Value.v1]) / (lonList[lons.Value.v2] - lonList[lons.Value.v1]);
+            var yd = (lat - latList[lats.Value.v1]) / (latList[lats.Value.v2] - latList[lats.Value.v1]);
+            var zd = (time - timeList[times.Value.v1]) / (timeList[times.Value.v2] - timeList[times.Value.v1]);
+
+            Console.WriteLine($"xd:{xd}");
+            Console.WriteLine($"yd:{yd}");
+            Console.WriteLine($"zd:{zd}");
 
             var c000 = inter[times.Value.v1, lats.Value.v1, lons.Value.v1];
             var c001 = inter[times.Value.v2, lats.Value.v1, lons.Value.v1];
@@ -176,17 +182,26 @@ namespace AutreMachine.Common.NetCDF
             var c110 = inter[times.Value.v1, lats.Value.v2, lons.Value.v2];
             var c111 = inter[times.Value.v2, lats.Value.v2, lons.Value.v2];
 
-            var c00 = c000*(1.0 - xd) + c100*xd;
-            var c01 = c001*(1.0 - xd) + c101*xd;
-            var c10 = c010*(1.0 - xd) + c110*xd;
-            var c11 = c011*(1.0 - xd) + c111*xd;
+            Console.WriteLine($"c000:{c000}");
+            Console.WriteLine($"c001:{c001}");
+            Console.WriteLine($"c010:{c010}");
+            Console.WriteLine($"c011:{c011}");
+            Console.WriteLine($"c100:{c100}");
+            Console.WriteLine($"c101:{c101}");
+            Console.WriteLine($"c110:{c110}");
+            Console.WriteLine($"c111:{c111}");
 
-            var c0 = c00*(1.0-yd) + c10*yd;
-            var c1 = c01*(1.0-yd) + c11*yd;
+            var c00 = _multiply(c000, (1.0-xd))+ _multiply(c100,xd);
+            var c01 = _multiply(c001, (1.0-xd))+ _multiply(c101,xd);
+            var c10 = _multiply(c010, (1.0-xd))+ _multiply(c110,xd);
+            var c11 = _multiply(c011, (1.0-xd))+ _multiply(c111,xd);
 
-            var c = c0 * (1.0 - zd) + c1 * zd;
+            var c0 = _multiply(c00, (1.0-yd)) + _multiply(c10, yd);
+            var c1 = _multiply(c01, (1.0-yd)) + _multiply(c11, yd);
 
-            return ServiceResponse<double>.Ok(c);
+            var c = _multiply(c0, (1.0 - zd)) + _multiply(c1, zd);
+
+            return ServiceResponse<U>.Ok(c);
         }
 
         private (int v1, int v2)? getIndexLimits<V>(V[] input, V value) where V : IComparable<V>, IEquatable<V>
