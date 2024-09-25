@@ -1,12 +1,16 @@
 using System.ComponentModel.DataAnnotations;
+using AutreMachine.Common.AI;
+using AutreMachine.Common.Tests.AI;
 
 namespace AutreMachine.Common.Tests.Common
 {
     public class Tests
     {
+
         [SetUp]
         public void Setup()
         {
+
         }
 
         [Test]

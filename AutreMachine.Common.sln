@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{BAAC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutreMachine.Common.AI", "AutreMachine.Common.AI\AutreMachine.Common.AI.csproj", "{C0B652B1-3A98-4EE7-9F8E-2E100AF71513}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutreMachine.Common.NetCDF", "AutreMachine.Common.NetCDF\AutreMachine.Common.NetCDF.csproj", "{D9131A23-543D-4BB8-962F-0B02DE95C82A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutreMachine.Common.NetCDF", "AutreMachine.Common.NetCDF\AutreMachine.Common.NetCDF.csproj", "{D9131A23-543D-4BB8-962F-0B02DE95C82A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

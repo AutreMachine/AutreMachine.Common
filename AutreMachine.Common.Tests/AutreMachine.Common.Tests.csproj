@@ -10,10 +10,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="AI\fia_f1_power_unit_financial_regulations_issue_1_-_2022-08-16.pdf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="AI\fia_f1_power_unit_financial_regulations_issue_1_-_2022-08-16.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageReference Include="NUnit" Version="4.1.0" />
     <PackageReference Include="NUnit.Analyzers" Version="4.2.0">
@@ -24,6 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AutreMachine.Common.AI\AutreMachine.Common.AI.csproj" />
     <ProjectReference Include="..\AutreMachine.Common.NetCDF\AutreMachine.Common.NetCDF.csproj" />
     <ProjectReference Include="..\AutreMachine.Common\AutreMachine.Common.csproj" />
   </ItemGroup>

@@ -28,5 +28,6 @@ namespace AutreMachine.Common.AI
         /// <returns></returns>
         Task<ServiceResponse<string>> AskQuestion(string assistantContent, string userContent);
         Task<ServiceResponse<string>> AskQuestion(AIMessage[] messages, float temperature = 0.7f);
+        Task<ServiceResponse<List<string>>> AskQuestionsOnPDF(string[] questions, string pdfPath);
     }
 }

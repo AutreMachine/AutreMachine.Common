@@ -1,1 +1,0 @@
-Some Razor tools used in conjuction with AutreMachine.Common, to help build easy CRUD pages.

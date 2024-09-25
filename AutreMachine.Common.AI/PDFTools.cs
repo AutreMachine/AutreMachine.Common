@@ -13,7 +13,7 @@ namespace AutreMachine.Common.AI
     /// </summary>
     public class PDFTools
     {
-        public async Task<ServiceResponse<string>> ReadPDFFile(string path)
+        public async static Task<ServiceResponse<string>> ReadPDFFile(string path)
         {
             if (!File.Exists(path))
                 return ServiceResponse<string>.Ko("File not found");
