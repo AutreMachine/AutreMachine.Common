@@ -23,10 +23,15 @@ namespace AutreMachine.Common.Tests.NetCDF
             // Read file and create object in return
             //var test = new TestNetCDF.ReadNC<MeanTemp>();
             //var result = test.Process(path2);
-            var test = new ReadNC<MeanTemp>(path2);
-            var result = test.Process();
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.lat.Length > 0, Is.True);
+            var test = new ReadNC<MeanTemp, double>(path2);
+            test.DisplayConsole();
+            test.Process("lon", "lat", "time", "tasAdjust");
+            var res = test.GetInterpolation(2.25, 48.81, 1000);
+            Console.WriteLine("\n\nResult : ");
+            Console.WriteLine(res.Content);
+            Assert.That(test.Results, Is.Not.Null);
+            Assert.That(test.Results.lat.Length > 0, Is.True);
+            // Lat : 48.81, Lon : 2.25
         }
     }
 }

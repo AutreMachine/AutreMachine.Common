@@ -15,7 +15,7 @@
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
 		<PackageLicenseFile>License.txt</PackageLicenseFile>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Version>1.0.0</Version>
+		<Version>1.0.1</Version>
 
 	</PropertyGroup>
 
@@ -27,6 +27,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="SDSLite" Version="3.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\AutreMachine.Common\AutreMachine.Common.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
