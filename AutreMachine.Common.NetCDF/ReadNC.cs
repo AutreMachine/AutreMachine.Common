@@ -20,10 +20,16 @@ namespace AutreMachine.Common.NetCDF
         double[]? lonList = null;
         double[]? latList = null;
         long[]? timeList = null;
-        Dictionary<string, float>? data = null;
-        U[,,]? inter = null;
+        //Dictionary<string, float>? data = null;
+        U[,,]? data = null;
+        // A multiply function between U and double
         Func<U, double, U> _multiply;
 
+        /// <summary>
+        /// Instantiates the ReadNC.
+        /// </summary>
+        /// <param name="path">Path of the .nc file to load</param>
+        /// <param name="multiply">a Func to guide how to multiply the U data type and double</param>
         public ReadNC(string path, Func<U, double, U> multiply)
         {
             this.path = path;
@@ -84,26 +90,8 @@ namespace AutreMachine.Common.NetCDF
                         if (dataColumnName != null && field.Name == dataColumnName)
                         {
                             // construct the dictionary
-                            var convert = data as U[,,];
-                            inter = convert as U[,,];
-                            if (convert != null)
-                            {
-                                // Ok, we can create the dictionary
-                                // Usually the values are : time|lat|lon : need to confirm !!
-                                /*for (int i = 0; i < convert.GetLength(0); i++)
-                                {
-                                    for (int j = 0; j < convert.GetLength(1); j++)
-                                    {
-                                        for (int k = 0; k < convert.GetLength(2); k++)
-                                        {
-                                            if (this.data == null)
-                                                this.data = new();
-                                            this.data.Add($"{k}_{j}_{i}", convert[i, j, k]);
-                                        }
-                                    }
-                                }*/
-
-                            }
+                            this.data = data as U[,,];
+                            
                         }
 
                         // Ok, now set the corresponding field on the target object
@@ -135,11 +123,12 @@ namespace AutreMachine.Common.NetCDF
             results = default(T);
             lonList = null;
             latList = null;
-            data = null;
+           //data = null;
         }
 
         /// <summary>
         /// Get an interpolated value from the results processed.
+        /// Check : https://en.wikipedia.org/wiki/Trilinear_interpolation
         /// </summary>
         /// <param name="lon"></param>
         /// <param name="lat"></param>
@@ -153,7 +142,7 @@ namespace AutreMachine.Common.NetCDF
                 return ServiceResponse<U>.Ko("Lat is null");
             if (timeList == null)
                 return ServiceResponse<U>.Ko("Time is null");
-            if (inter == null)
+            if (data == null)
                 return ServiceResponse<U>.Ko("Data is null");
 
             // Search values
@@ -173,14 +162,14 @@ namespace AutreMachine.Common.NetCDF
             Console.WriteLine($"yd:{yd}");
             Console.WriteLine($"zd:{zd}");
 
-            var c000 = inter[times.Value.v1, lats.Value.v1, lons.Value.v1];
-            var c001 = inter[times.Value.v2, lats.Value.v1, lons.Value.v1];
-            var c010 = inter[times.Value.v1, lats.Value.v2, lons.Value.v1];
-            var c011 = inter[times.Value.v2, lats.Value.v2, lons.Value.v1];
-            var c100 = inter[times.Value.v1, lats.Value.v1, lons.Value.v2];
-            var c101 = inter[times.Value.v2, lats.Value.v1, lons.Value.v2];
-            var c110 = inter[times.Value.v1, lats.Value.v2, lons.Value.v2];
-            var c111 = inter[times.Value.v2, lats.Value.v2, lons.Value.v2];
+            var c000 = data[times.Value.v1, lats.Value.v1, lons.Value.v1];
+            var c001 = data[times.Value.v2, lats.Value.v1, lons.Value.v1];
+            var c010 = data[times.Value.v1, lats.Value.v2, lons.Value.v1];
+            var c011 = data[times.Value.v2, lats.Value.v2, lons.Value.v1];
+            var c100 = data[times.Value.v1, lats.Value.v1, lons.Value.v2];
+            var c101 = data[times.Value.v2, lats.Value.v1, lons.Value.v2];
+            var c110 = data[times.Value.v1, lats.Value.v2, lons.Value.v2];
+            var c111 = data[times.Value.v2, lats.Value.v2, lons.Value.v2];
 
             Console.WriteLine($"c000:{c000}");
             Console.WriteLine($"c001:{c001}");
