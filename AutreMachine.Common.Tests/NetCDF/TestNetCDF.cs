@@ -31,6 +31,8 @@ namespace AutreMachine.Common.Tests.NetCDF
             var res = test.GetInterpolation(2.27, 48.81, 1020);
             Console.WriteLine("\n\nResult : ");
             Console.WriteLine(res.Content);
+            Console.WriteLine((test.Results.lat.Length - 1) * (test.Results.lon.Length - 1) + " polygons.");
+
             Assert.That(test.Results, Is.Not.Null);
             Assert.That(test.Results.lat.Length > 0, Is.True);
             // Lat : 48.81, Lon : 2.25

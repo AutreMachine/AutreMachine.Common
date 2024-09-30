@@ -26,7 +26,7 @@ namespace AutreMachine.Common.NetCDF
         Func<U, double, U> _multiply;
 
         /// <summary>
-        /// Instantiates the ReadNC.
+        /// Instantiates the ReadNC<T, U> : T is the output class we want to create, U is the format of the data in the file (ex: single)
         /// </summary>
         /// <param name="path">Path of the .nc file to load</param>
         /// <param name="multiply">a Func to guide how to multiply the U data type and double</param>
