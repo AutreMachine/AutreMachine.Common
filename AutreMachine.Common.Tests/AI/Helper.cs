@@ -15,10 +15,7 @@ namespace AutreMachine.Common.Tests.AI
     {
         private static IServiceProvider Provider()
         {
-            //string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=OpenAIRSSDB;Trusted_Connection=True;";
-            //string connectionString = "Server=tcp:concretesqlserver.database.windows.net,1433;Initial Catalog=openai-database;Persist Security Info=False;User ID=adminconcrete;Password=C6PQQse#TKF8;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             var services = new ServiceCollection();
-
 
 
             services.AddHttpClient();

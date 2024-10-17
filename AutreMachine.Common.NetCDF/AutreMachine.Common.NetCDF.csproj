@@ -34,9 +34,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Resource Include="netcdf.dll">
+		<Content Include="netcdf.dll">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Resource>
+		</Content>
 	</ItemGroup>
 
 </Project>
