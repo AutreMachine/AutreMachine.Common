@@ -88,7 +88,8 @@ namespace AutreMachine.Common
             if (resp == null)
                 return ServiceResponse<T>.Ko("Could not deserialize");
 
-            return ServiceResponse<T>.Ok(resp.Content);
+            return resp;
+            //return ServiceResponse<T>.Ok(resp.Content);
 
         }
 
