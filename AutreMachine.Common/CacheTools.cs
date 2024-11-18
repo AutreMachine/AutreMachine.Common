@@ -89,6 +89,10 @@ namespace AutreMachine.Common
             SetCache(key, value, CacheDuration._5Min);
         }
 
+        public static void ClearCache(string key)
+        {
+            _cache.Remove(key);
+        }
         
     }
 
