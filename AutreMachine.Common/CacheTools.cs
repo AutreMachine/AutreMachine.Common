@@ -91,35 +91,10 @@ namespace AutreMachine.Common
 
         public static void ClearCache(string key)
         {
+            key = key.Trim().ToUpper();
             _cache.Remove(key);
         }
         
-    }
-
-    public enum CacheDuration
-    {
-        _1Min,
-        _5Min,
-        _30Min,
-        _1Hour,
-        _6Hours
-    }
-
-    public class CacheKeys
-    {
-        static MemoryCache _cache = MemoryCache.Default;
-
-        #region Methods without type
-        // These methods are in this class because it needs no Type to pass
-        public static void ClearCache(string key)
-        {
-            key = key.Trim().ToUpper();
-            _cache.Remove(key);   
-        }
-
-        public static string GenerateKey(params string[] keys) { return string.Join('_', keys).Trim().ToUpper(); }
-
-
         /// <summary>
         /// Clear all cache beginning with a key
         /// </summary>
@@ -138,6 +113,51 @@ namespace AutreMachine.Common
             var foundKeys = _cache.Where(x => x.Key.StartsWith(key)).Any();
             return (foundKeys);
         }
+    }
+
+    public enum CacheDuration
+    {
+        _1Min,
+        _5Min,
+        _30Min,
+        _1Hour,
+        _6Hours
+    }
+
+    public class CacheKeys
+    {
+        static MemoryCache _cache = MemoryCache.Default;
+
+        #region Methods without type
+        // These methods are in this class because it needs no Type to pass
+        /*public static void ClearCache(string key)
+        {
+            key = key.Trim().ToUpper();
+            _cache.Remove(key);   
+        }*/
+
+        public static string GenerateKey(params string[] keys) { return string.Join('_', keys).Trim().ToUpper(); }
+
+
+        /*
+        /// <summary>
+        /// Clear all cache beginning with a key
+        /// </summary>
+        /// <param name="key"></param>
+        public static void ClearCacheStartingWith(string key)
+        {
+            key = key.Trim().ToUpper();
+            var removedKeys = _cache.Where(x => x.Key.StartsWith(key)).Select(x => x.Key).ToList();
+            foreach(var unitKey in removedKeys)
+                _cache.Remove(unitKey);
+        }
+
+        public static bool ExistsEntriesStartingWith(string key)
+        {
+            key = key.Trim().ToUpper();
+            var foundKeys = _cache.Where(x => x.Key.StartsWith(key)).Any();
+            return (foundKeys);
+        }*/
         #endregion
 
     }
