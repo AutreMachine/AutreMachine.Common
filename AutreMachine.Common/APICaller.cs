@@ -133,7 +133,7 @@ namespace AutreMachine.Common
 
         public static async Task<ServiceResponse<T>> Put<U>(HttpClient? client, string query, U? request)
         {
-             if (client == null)
+            if (client == null)
                 return (ServiceResponse<T>.Ko("Http not provided"));
 
             if (client.BaseAddress == null)
@@ -168,7 +168,7 @@ namespace AutreMachine.Common
         /// <returns></returns>
         public static async Task<ServiceResponse<T>> Post<U>(HttpClient? client, string query, U request, bool isResponseServiceResponse = true, string? contentType = null)
         {
-             if (client == null)
+            if (client == null)
                 return (ServiceResponse<T>.Ko("Http not provided"));
 
             if (client.BaseAddress == null)
@@ -192,7 +192,7 @@ namespace AutreMachine.Common
                     if (request != null)
                     {
                         if (request.GetType().IsPrimitive || typeof(U) == typeof(string))
-                            req.Content = new StringContent(request.ToString()??"",
+                            req.Content = new StringContent(request.ToString() ?? "",
                             Encoding.UTF8,
                             contentType);
                         else if (request is FormUrlEncodedContent)
@@ -255,7 +255,7 @@ namespace AutreMachine.Common
 
         public static async Task<ServiceResponse<T>> Delete(HttpClient? client, string query, params object[] parameters)
         {
-             if (client == null)
+            if (client == null)
                 return (ServiceResponse<T>.Ko("Http not provided"));
 
             if (client.BaseAddress == null)
@@ -264,18 +264,18 @@ namespace AutreMachine.Common
             string finalQuery = CreateQuery(query, parameters);
 
             HttpResponseMessage response = await client.DeleteAsync(finalQuery);
-            T? resp = default(T);
-            if (response.IsSuccessStatusCode)
+            ServiceResponse<T>? resp = ServiceResponse<T>.Default;
+            if (response != null && response.IsSuccessStatusCode)
             {
                 var respStr = await response.Content.ReadAsStringAsync();
-                resp = JsonSerializer.Deserialize<T>(respStr, serializerOptions);
+                resp = JsonSerializer.Deserialize<ServiceResponse<T>>(respStr, serializerOptions);
             }
             else
             {
                 return ServiceResponse<T>.Ko("Error : " + response.StatusCode);
             }
 
-            return ServiceResponse<T>.Ok(resp);
+            return resp;
         }
 
     }

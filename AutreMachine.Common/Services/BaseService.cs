@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
 namespace AutreMachine.Common
 {
@@ -13,12 +14,12 @@ namespace AutreMachine.Common
     /// Attention : on ne tient pas compte du OwnerId pour les opérations (par exemple, pour JoinService)
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class BaseService<T> : IBaseService<T> where T : IBaseClass
+    public class BaseService<T, U> : IBaseService<T,U> where T : IBaseClass where U:DbContext
     {
         public ILogger<T> logger { get; set; }
-        public IRepository<T> repository { get; set; }
+        public IRepository<T, U> repository { get; set; }
 
-        public BaseService(IRepository<T> repository, ILogger<T> logger)
+        public BaseService(IRepository<T, U> repository, ILogger<T> logger)
         {
             this.repository = repository;
             this.logger = logger;
