@@ -68,7 +68,7 @@ namespace AutreMachine.Common
                     if (request != null)
                     {
                         if (request.GetType().IsPrimitive || typeof(U) == typeof(string))
-                            req.Content = new StringContent(request.ToString()??"",
+                            req.Content = new StringContent(request.ToString() ?? "",
                             Encoding.UTF8,
                             contentType);
                         else if (request is FormUrlEncodedContent)
@@ -95,9 +95,27 @@ namespace AutreMachine.Common
                     response = await client.SendAsync(req);
                 }
 
+                ServiceResponseEmpty? resp = null;
                 if (response != null && response.IsSuccessStatusCode)
                 {
-                    return ServiceResponseEmpty.Ok();
+                    var respStr = await response.Content.ReadAsStringAsync();
+
+                    // Try to deserialize
+                    if (isResponseServiceResponse)
+                        resp = JsonSerializer.Deserialize<ServiceResponseEmpty?>(respStr, serializerOptions);
+                    else
+                    {
+                        // Try on T
+                        var content = JsonSerializer.Deserialize<ServiceResponseEmpty?>(respStr, serializerOptions);
+                        if (content == null)
+                            resp = ServiceResponseEmpty.Ko("Could not deserialize");
+                        else
+                            resp = ServiceResponseEmpty.Ok();
+                    }
+                    if (resp != null)
+                        return resp; // ServiceResponseEmpty.Ok();
+                    else
+                        return ServiceResponseEmpty.Ko("Error");
                 }
                 else
                     return ServiceResponseEmpty.Ko("Error : " + response?.StatusCode);
@@ -115,7 +133,20 @@ namespace AutreMachine.Common
             string finalQuery = APICaller<bool>.CreateQuery(query, parameters);
 
             HttpResponseMessage response = await client.DeleteAsync(finalQuery);
-            
+
+            if (response != null && response.IsSuccessStatusCode)
+            {
+                var respStr = await response.Content.ReadAsStringAsync();
+                var resp = JsonSerializer.Deserialize<ServiceResponseEmpty?>(respStr, serializerOptions);
+                if (resp != null)
+                    return resp; // ServiceResponseEmpty.Ok();
+                else
+                    return ServiceResponseEmpty.Ko("Error");
+            }
+
+            return ServiceResponseEmpty.Ko("Error : " + response.StatusCode);
+
+            /*
             if (response.IsSuccessStatusCode)
             {
                 return ServiceResponseEmpty.Ok();
@@ -123,7 +154,7 @@ namespace AutreMachine.Common
             else
             {
                 return ServiceResponseEmpty.Ko("Error : " + response.StatusCode);
-            }
+            }*/
 
         }
 

@@ -9,9 +9,9 @@ namespace AutreMachine.Common
     /// Classe de base pour tous les Repository en Generic
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IRepository<T>
+    public interface IRepository<T, U> where U:DbContext
     {
-        DbContext context { get; set; }
+        U context { get; set; }
         //IEnumerable<T> GetAll();
         IQueryable<T> GetAllQuery();
         Task<T> Get(int Id);

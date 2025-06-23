@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace AutreMachine.Common
 {
-    public class Repository<T> : IRepository<T> where T : BaseClass
+    public class Repository<T, U> : IRepository<T, U> where T : BaseClass where U:DbContext
     {
-        public DbContext context { get; set; }
+        public U context { get; set; }
 
         private DbSet<T> entities;
         string errorMessage = string.Empty;
 
         private string typeName;
 
-        public Repository(DbContext context)
+        public Repository(U context)
         {
             this.context = context;
             context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
