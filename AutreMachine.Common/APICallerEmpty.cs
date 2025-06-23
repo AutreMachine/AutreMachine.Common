@@ -134,6 +134,19 @@ namespace AutreMachine.Common
 
             HttpResponseMessage response = await client.DeleteAsync(finalQuery);
 
+            if (response != null && response.IsSuccessStatusCode)
+            {
+                var respStr = await response.Content.ReadAsStringAsync();
+                var resp = JsonSerializer.Deserialize<ServiceResponseEmpty?>(respStr, serializerOptions);
+                if (resp != null)
+                    return resp; // ServiceResponseEmpty.Ok();
+                else
+                    return ServiceResponseEmpty.Ko("Error");
+            }
+
+            return ServiceResponseEmpty.Ko("Error : " + response.StatusCode);
+
+            /*
             if (response.IsSuccessStatusCode)
             {
                 return ServiceResponseEmpty.Ok();
@@ -141,7 +154,7 @@ namespace AutreMachine.Common
             else
             {
                 return ServiceResponseEmpty.Ko("Error : " + response.StatusCode);
-            }
+            }*/
 
         }
 
