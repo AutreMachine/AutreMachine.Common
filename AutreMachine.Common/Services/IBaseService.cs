@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace AutreMachine.Common
 {
+    /// <summary>
+    /// Interface for base Service
+    /// </summary>
+    /// <typeparam name="T">The BaseClass derivative class</typeparam>
+    /// <typeparam name="U">The DBContext used for the service</typeparam>
     public interface IBaseService<T,U> where U: DbContext
     {
 
