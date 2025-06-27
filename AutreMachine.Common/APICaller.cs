@@ -79,10 +79,15 @@ namespace AutreMachine.Common
                 {
                     return (ServiceResponse<T>.Ko("Unauthorized"));
                 }
-                //throw new UnauthorizedAccessException();
 
-                //throw new Exception("Error : " + response.StatusCode + " - " + content);
-                return (ServiceResponse<T>.Ko("Error : " + response.StatusCode + " - " + content));
+                // Message for NotFound
+                var message = "";
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    message = "NotFound : " + client.BaseAddress + finalQuery;
+                else
+                    message = "Error : " + response.StatusCode + " - " + content;
+
+                return (ServiceResponse<T>.Ko(message));
             }
 
             if (resp == null)
