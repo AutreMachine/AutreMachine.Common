@@ -19,6 +19,8 @@ namespace AutreMachine.Common
         public ILogger<T> logger { get; set; }
         public IRepository<T, U> repository { get; set; }
 
+        public IRepository<T, U> Repository { get => repository; }
+
         public BaseService(IRepository<T, U> repository, ILogger<T> logger)
         {
             this.repository = repository;
